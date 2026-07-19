@@ -1,15 +1,19 @@
+import express from "express";
 import dotenv from "dotenv";
+
+import connectDB from "./config/db.js";
+import routes from "./routes/index.js";
+
 dotenv.config();
 
-import app from "./app.js";
-import connectDB from "./config/db.js";
-
-const PORT = process.env.PORT || 5000;
-
-// Connect to MongoDB
 connectDB();
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+const app = express();
+
+app.use(express.json());
+
+app.use("/api/v1", routes);
+
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
 });
