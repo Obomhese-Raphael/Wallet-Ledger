@@ -1,21 +1,15 @@
-import express from "express";
 import dotenv from "dotenv";
-import connectDB from "./config/db.js";
-
 dotenv.config();
 
-console.log("This is the MONGO_URI:", process.env.MONGO_URI);
-
-const app = express();
-
-connectDB();
-
-app.get("/", (_req, res) => {
-  res.send("Wallet Ledger API is running...");
-});
+import app from "./app.js";
+import connectDB from "./config/db.js";
 
 const PORT = process.env.PORT || 5000;
 
+// Connect to MongoDB
+connectDB();
+
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
