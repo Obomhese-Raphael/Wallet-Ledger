@@ -18,7 +18,6 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-
 export const login = async (req: Request, res: Response) => {
   try {
     const data = await loginUser(req.body);
@@ -31,4 +30,8 @@ export const login = async (req: Request, res: Response) => {
 
     return errorResponse(res, "Internal Server Error", 500);
   }
+};
+
+export const getCurrentUser = async (req: Request, res: Response) => {
+  return successResponse(res, "Current user retrieved successfully", req.user);
 };
