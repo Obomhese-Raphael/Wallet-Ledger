@@ -1,15 +1,12 @@
 import type { Request, Response } from "express";
-import { successResponse, errorResponse } from "../utils/apiResponse.js";
-import { getWalletByUserId } from "../services/wallet.service.js";
 
-export const getWallet = async (req: Request, res: Response) => {
+import { successResponse } from "../utils/apiResponse.js";
+import { depositMoney } from "../services/transaction.service.js";
+
+export const deposit = async (req: Request, res: Response) => {
   const user = (req as any).user;
 
-  const wallet = await getWalletByUserId(user._id.toString());
+  const transaction = await depositMoney(user._id.toString(), req.body.amount);
 
-  if (!wallet) {
-    return errorResponse(res, "Wallet not found", 404);
-  }
-
-  return successResponse(res, "Wallet fetched successfully", wallet);
+  return successResponse(res, "Deposit successful", transaction);
 };

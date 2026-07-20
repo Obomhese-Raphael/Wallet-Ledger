@@ -4,11 +4,18 @@ import { successResponse, errorResponse } from "../utils/apiResponse.js";
 import AppError from "../utils/AppError.js";
 import { loginUser } from "../services/auth.service.js";
 import { createWallet } from "../services/wallet.service.js";
+import { createAccount } from "../services/account.service.js";
 
 export const register = async (req: Request, res: Response) => {
   try {
     const user = await registerUser(req.body);
     await createWallet(user._id.toString());
+    await createAccount({
+      ownerType: "USER",
+      ownerId: user._id.toString(),
+      type: "WALLET",
+      name: `${user.firstName} ${user.lastName} Wallet`,
+    });
     return successResponse(res, "User registered successfully", user, 201);
   } catch (error) {
     if (error instanceof AppError) {

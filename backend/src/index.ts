@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import routes from "./routes/index.js";
 import walletRoutes from "./routes/wallet.routes.js";
+import transactionRoutes from "./routes/transaction.routes.js";
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use("/api/v1", routes);
 app.use("/api/v1/wallet", walletRoutes);
+app.use("/api/v1/transaction", transactionRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
