@@ -5,6 +5,7 @@ export const getAccountBalance = async (accountId: string) => {
     accountId,
   });
 
+
   let balance = 0;
 
   for (const entry of entries) {
@@ -14,6 +15,6 @@ export const getAccountBalance = async (accountId: string) => {
       balance -= entry.amount;
     }
   }
-
+  
   return balance;
 };

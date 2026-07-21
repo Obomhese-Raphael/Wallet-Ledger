@@ -5,6 +5,7 @@ import Transaction from "../models/transaction.model.js";
 
 import { createDoubleEntry } from "./ledger.service.js";
 import { generateReference } from "../utils/generateReference.js";
+import { getAccountBalance } from "./balance.service.js";
 
 export const depositMoney = async (userId: string, amount: number) => {
   const session = await mongoose.startSession();
@@ -14,6 +15,7 @@ export const depositMoney = async (userId: string, amount: number) => {
 
     const userAccount = await Account.findOne({
       ownerId: userId,
+      ownerType: "USER",
       type: "WALLET",
     }).session(session);
 
@@ -44,8 +46,16 @@ export const depositMoney = async (userId: string, amount: number) => {
       { session },
     );
 
+    // Create double entry
+    const createdTransaction = transaction[0];
+
+    if (!createdTransaction) {
+      throw new Error("Failed to create transaction");
+    }
+
+    // Create double entry
     await createDoubleEntry({
-      transactionId: transaction[0]._id.toString(),
+      transactionId: createdTransaction._id.toString(),
       fromAccountId: systemCash._id.toString(),
       toAccountId: userAccount._id.toString(),
       amount,
@@ -55,7 +65,85 @@ export const depositMoney = async (userId: string, amount: number) => {
 
     await session.commitTransaction();
 
-    return transaction[0];
+    return createdTransaction;
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+};
+
+
+export const withdrawMoney = async (userId: string, amount: number) => {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    // Find the user's wallet account
+    const userAccount = await Account.findOne({
+      ownerId: userId,
+      ownerType: "USER",
+      type: "WALLET",
+    }).session(session);
+
+    if (!userAccount) {
+      throw new Error("Wallet account not found");
+    }
+
+    // Find the system cash account
+    const systemCash = await Account.findOne({
+      ownerType: "SYSTEM",
+      type: "CASH",
+    }).session(session);
+
+    if (!systemCash) {
+      throw new Error("System account not found");
+    }
+
+    // Calculate current balance
+    const balance = await getAccountBalance(userAccount._id.toString());
+
+    if (balance < amount) {
+      throw new Error("Insufficient funds");
+    }
+
+    // Create transaction
+    const transaction = await Transaction.create(
+      [
+        {
+          accountId: userAccount._id,
+          type: "withdraw",
+          amount,
+          reference: generateReference(),
+          status: "completed",
+          description: "Wallet Withdrawal",
+        },
+      ],
+      { session },
+    );
+
+    // Reverse the ledger entries
+    const createdTransaction = transaction[0];
+
+    if (!createdTransaction) {
+      throw new Error("Failed to create transaction");
+    }
+
+    // Reverse the ledger entries
+    await createDoubleEntry({
+      transactionId: createdTransaction._id.toString(),
+      fromAccountId: userAccount._id.toString(),
+      toAccountId: systemCash._id.toString(),
+      amount,
+      description: "Wallet Withdrawal",
+      session,
+    });
+
+    await session.commitTransaction();
+
+    return createdTransaction;
   } catch (error) {
     await session.abortTransaction();
     throw error;
