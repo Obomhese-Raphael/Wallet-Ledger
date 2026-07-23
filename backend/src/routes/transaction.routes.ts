@@ -3,7 +3,7 @@ import { Router } from "express";
 import { protect } from "../middleware/auth.middleware.js";
 import { validate } from "../middleware/validate.middleware.js";
 
-import { deposit, getHistory } from "../controllers/transaction.controller.js";
+import { deposit, getHistory, getTransaction } from "../controllers/transaction.controller.js";
 import { depositSchema } from "../validators/transaction.validator.js";
 
 const router = Router();
@@ -19,6 +19,12 @@ router.get(
   "/",
   protect,
   getHistory
+);
+
+router.get(
+  "/:id",
+  protect,
+  getTransaction
 );
 
 export default router;

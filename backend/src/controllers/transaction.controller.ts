@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 import { depositMoney } from "../services/transaction.service.js";
 import { errorResponse, successResponse } from "../utils/apiResponse.js";
 import Account from "../models/account.model.js";
-import { getTransactionHistory } from "../services/history.service.js";
+import { getTransactionDetails, getTransactionHistory } from "../services/history.service.js";
 
 export const deposit = async (req: Request, res: Response) => {
   const user = (req as any).user;
@@ -50,6 +50,39 @@ export const getHistory = async (req: Request, res: Response) => {
       error instanceof Error
         ? error.message
         : "Failed to retrieve transaction history",
+      500,
+    );
+  }
+};
+
+export const getTransaction = async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const user = (req as any).user;
+
+    const account = await Account.findOne({
+      ownerId: user._id,
+      ownerType: "USER",
+      type: "WALLET",
+    });
+
+    if (!account) {
+      return errorResponse(res, "Wallet account not found", 404);
+    }
+
+    const transaction = await getTransactionDetails(
+      req.params.id,
+      account._id.toString(),
+    );
+
+    return successResponse(
+      res,
+      "Transaction retrieved successfully",
+      transaction,
+    );
+  } catch (error) {
+    return errorResponse(
+      res,
+      error instanceof Error ? error.message : "Failed to retrieve transaction",
       500,
     );
   }

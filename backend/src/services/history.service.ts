@@ -1,4 +1,5 @@
 import Transaction from "../models/transaction.model.js";
+import LedgerEntry from "../models/LedgerEntry.model.js";
 
 interface HistoryOptions {
   page?: number;
@@ -56,5 +57,31 @@ export const getTransactionHistory = async (
       total,
       totalPages: Math.ceil(total / limit),
     },
+  };
+};
+
+
+export const getTransactionDetails = async (
+  transactionId: string,
+  accountId: string,
+) => {
+  // Find the transaction and make sure it belongs to this user
+  const transaction = await Transaction.findOne({
+    _id: transactionId,
+    accountId,
+  });
+
+  if (!transaction) {
+    throw new Error("Transaction not found");
+  }
+
+  // Fetch the ledger entries for this transaction
+  const ledgerEntries = await LedgerEntry.find({
+    transactionId,
+  }).populate("accountId", "name type ownerType");
+
+  return {
+    transaction,
+    ledgerEntries,
   };
 };
