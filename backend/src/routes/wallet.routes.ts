@@ -3,9 +3,10 @@ import { Router } from "express";
 import { protect } from "../middleware/auth.middleware.js";
 import validate from "../middleware/validate.js";
 
-import { deposit, getBalance, withdraw } from "../controllers/wallet.controller.js";
+import { deposit, getBalance, transfer, withdraw } from "../controllers/wallet.controller.js";
 
 import { depositSchema, withdrawSchema } from "../validators/wallet.validator.js";
+import { transferSchema } from "../validators/transfer.validator.js";
 
 const router = Router();
 
@@ -13,7 +14,9 @@ const router = Router();
 router.post("/deposit", protect, validate(depositSchema), deposit);
 // Get the Account Balance
 router.get("/balance", protect, getBalance)
-// Withraw an Amount from an Account
+// Withraw an Amount
 router.post("/withdraw", protect, validate(withdrawSchema), withdraw)
+// Transfer an amount
+router.post("/transfer", protect , validate(transferSchema), transfer)
 
 export default router;
