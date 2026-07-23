@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 import { registerUser } from "../services/auth.service.js";
 import { successResponse, errorResponse } from "../utils/apiResponse.js";
-import AppError from "../utils/AppError.js";
 import { loginUser } from "../services/auth.service.js";
 import { createWallet } from "../services/wallet.service.js";
 import { createAccount } from "../services/account.service.js";
+import appError from "../utils/appError.js";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -18,7 +18,7 @@ export const register = async (req: Request, res: Response) => {
     });
     return successResponse(res, "User registered successfully", user, 201);
   } catch (error) {
-    if (error instanceof AppError) {
+    if (error instanceof appError) {
       return errorResponse(res, error.message, error.statusCode);
     }
 
@@ -32,7 +32,7 @@ export const login = async (req: Request, res: Response) => {
 
     return successResponse(res, "Login successful", data);
   } catch (error) {
-    if (error instanceof AppError) {
+    if (error instanceof appError) {
       return errorResponse(res, error.message, error.statusCode);
     }
 
