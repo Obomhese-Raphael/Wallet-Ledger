@@ -2,49 +2,59 @@ import Transaction from "../models/transaction.model.js";
 import LedgerEntry from "../models/LedgerEntry.model.js";
 
 interface HistoryOptions {
+  accountId: string;
   page?: number;
   limit?: number;
   type?: "deposit" | "withdraw" | "transfer";
   reference?: string;
   startDate?: string;
   endDate?: string;
+  sort?: "newest" | "oldest";
 }
 
-export const getTransactionHistory = async (
-  accountId: string,
-  options: HistoryOptions = {},
-) => {
-  const { page = 1, limit = 10, type, reference, startDate, endDate } = options;
+export const getTransactionHistory = async ({
+  accountId,
+  page = 1,
+  limit = 10,
+  type,
+  reference,
+  startDate,
+  endDate,
+  sort = "newest",
+}: HistoryOptions) => {
+  const query: Record<string, unknown> = {
+    accountId,
+  };
 
-  const query: any = { accountId };
-
-  // Filter by type
   if (type) {
     query.type = type;
   }
 
-  // Search by reference
   if (reference) {
     query.reference = reference;
   }
 
-  // Filter by date range
   if (startDate || endDate) {
     query.createdAt = {};
 
     if (startDate) {
-      query.createdAt.$gte = new Date(startDate);
+      (query.createdAt as Record<string, Date>).$gte = new Date(startDate);
     }
 
     if (endDate) {
-      query.createdAt.$lte = new Date(endDate);
+      (query.createdAt as Record<string, Date>).$lte = new Date(endDate);
     }
   }
 
   const skip = (page - 1) * limit;
 
   const [transactions, total] = await Promise.all([
-    Transaction.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    Transaction.find(query)
+      .sort({
+        createdAt: sort === "oldest" ? 1 : -1,
+      })
+      .skip(skip)
+      .limit(limit),
 
     Transaction.countDocuments(query),
   ]);
@@ -60,12 +70,10 @@ export const getTransactionHistory = async (
   };
 };
 
-
 export const getTransactionDetails = async (
   transactionId: string,
   accountId: string,
 ) => {
-  // Find the transaction and make sure it belongs to this user
   const transaction = await Transaction.findOne({
     _id: transactionId,
     accountId,
@@ -75,7 +83,6 @@ export const getTransactionDetails = async (
     throw new Error("Transaction not found");
   }
 
-  // Fetch the ledger entries for this transaction
   const ledgerEntries = await LedgerEntry.find({
     transactionId,
   }).populate("accountId", "name type ownerType");

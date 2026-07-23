@@ -3,21 +3,46 @@ import { z } from "zod";
 
 import { errorResponse } from "../utils/apiResponse.js";
 
+type ValidationTarget = "body" | "query" | "params";
+
+// export const validate =
+//   (
+//     schema: z.ZodType,
+//     target: ValidationTarget = "body",
+//   ) =>
+//     (
+//       req: Request,
+//       res: Response,
+//       next: NextFunction
+//     ) => {
+//     const result = schema.safeParse(req[target]);
+
+//     if (!result.success) {
+//       return errorResponse(
+//         res,
+//         "Validation failed",
+//         400,
+//         result.error.issues
+//       );
+//     }
+
+//     req[target] = result.data;
+
+//     next();
+//   };
+
 export const validate =
-  (schema: z.ZodTypeAny) =>
-    (req: Request, res: Response, next: NextFunction) => {
-    const result = schema.safeParse(req.body);
+  (schema: z.ZodType, target: "body" | "query" | "params" = "body") =>
+  (req: Request, res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req[target]);
 
     if (!result.success) {
-      return errorResponse(
-        res,
-        "Validation failed",
-        400,
-        result.error.issues
-      );
+      return errorResponse(res, "Validation failed", 400, result.error.issues);
     }
 
-    req.body = result.data;
+    if (target === "body") {
+      req.body = result.data;
+    }
 
     next();
   };

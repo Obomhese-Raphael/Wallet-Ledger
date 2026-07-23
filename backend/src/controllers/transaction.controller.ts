@@ -1,9 +1,11 @@
+import { z } from "zod";
 import type { Request, Response } from "express";
 
 import { depositMoney } from "../services/transaction.service.js";
 import { errorResponse, successResponse } from "../utils/apiResponse.js";
 import Account from "../models/account.model.js";
 import { getTransactionDetails, getTransactionHistory } from "../services/history.service.js";
+import { historySchema } from "../validators/history.validators.js";
 
 export const deposit = async (req: Request, res: Response) => {
   const user = (req as any).user;
@@ -27,23 +29,42 @@ export const getHistory = async (req: Request, res: Response) => {
       return errorResponse(res, "Wallet account not found", 404);
     }
 
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    // const {
+    //   page,
+    //   limit,
+    //   type,
+    //   reference,
+    //   startDate,
+    //   endDate,
+    //   sort
+    // } =
+    //   req.query as unknown as z.infer<typeof historySchema>;
 
-    const result = await getTransactionHistory(account._id.toString(), {
+    const { page, limit, type, reference, startDate, endDate, sort } =
+      historySchema.parse(req.query);
+
+    const history = await getTransactionHistory({
+      accountId: account._id.toString(),
       page,
       limit,
-      type: req.query.type as any,
-      reference: req.query.reference as string,
-      startDate: req.query.startDate as string,
-      endDate: req.query.endDate as string,
+
+      ...(type && { type }),
+
+      ...(reference && { reference }),
+
+      ...(startDate && { startDate }),
+
+      ...(endDate && { endDate }),
+
+      ...(sort && { sort }),
     });
 
     return successResponse(
       res,
       "Transaction history retrieved successfully",
-      result,
+      history,
     );
+
   } catch (error) {
     return errorResponse(
       res,

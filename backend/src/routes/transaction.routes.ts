@@ -5,6 +5,7 @@ import { validate } from "../middleware/validate.middleware.js";
 
 import { deposit, getHistory, getTransaction } from "../controllers/transaction.controller.js";
 import { depositSchema } from "../validators/transaction.validator.js";
+import { historySchema } from "../validators/history.validators.js";
 
 const router = Router();
 
@@ -18,6 +19,7 @@ router.post(
 router.get(
   "/",
   protect,
+  validate(historySchema, "query"),
   getHistory
 );
 
