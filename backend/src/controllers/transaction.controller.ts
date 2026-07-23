@@ -1,10 +1,13 @@
 import { z } from "zod";
 import type { Request, Response } from "express";
 
-import { depositMoney } from "../services/transaction.service.js";
+import { depositMoney, transferMoney, withdrawMoney } from "../services/transaction.service.js";
 import { errorResponse, successResponse } from "../utils/apiResponse.js";
 import Account from "../models/account.model.js";
-import { getTransactionDetails, getTransactionHistory } from "../services/history.service.js";
+import {
+  getTransactionDetails,
+  getTransactionHistory,
+} from "../services/history.service.js";
 import { historySchema } from "../validators/history.validators.js";
 
 export const deposit = async (req: Request, res: Response) => {
@@ -28,17 +31,6 @@ export const getHistory = async (req: Request, res: Response) => {
     if (!account) {
       return errorResponse(res, "Wallet account not found", 404);
     }
-
-    // const {
-    //   page,
-    //   limit,
-    //   type,
-    //   reference,
-    //   startDate,
-    //   endDate,
-    //   sort
-    // } =
-    //   req.query as unknown as z.infer<typeof historySchema>;
 
     const { page, limit, type, reference, startDate, endDate, sort } =
       historySchema.parse(req.query);
@@ -64,7 +56,6 @@ export const getHistory = async (req: Request, res: Response) => {
       "Transaction history retrieved successfully",
       history,
     );
-
   } catch (error) {
     return errorResponse(
       res,
@@ -76,7 +67,10 @@ export const getHistory = async (req: Request, res: Response) => {
   }
 };
 
-export const getTransaction = async (req: Request<{ id: string }>, res: Response) => {
+export const getTransaction = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
   try {
     const user = (req as any).user;
 
@@ -105,6 +99,46 @@ export const getTransaction = async (req: Request<{ id: string }>, res: Response
       res,
       error instanceof Error ? error.message : "Failed to retrieve transaction",
       500,
+    );
+  }
+};
+
+export const withdraw = async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+
+    const { amount } = req.body;
+
+    const transaction = await withdrawMoney(user._id.toString(), amount);
+
+    return successResponse(res, "Withdrawal successful", transaction, 201);
+  } catch (error) {
+    return errorResponse(
+      res,
+      error instanceof Error ? error.message : "Withdrawal failed",
+      400,
+    );
+  }
+};
+
+export const transfer = async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+
+    const { recipientEmail, amount } = req.body;
+
+    const transaction = await transferMoney(
+      user._id.toString(),
+      recipientEmail,
+      amount,
+    );
+
+    return successResponse(res, "Transfer Successful", transaction, 201);
+  } catch (error) {
+    return errorResponse(
+      res,
+      error instanceof Error ? error.message : "Transfer Failed",
+      400,
     );
   }
 };

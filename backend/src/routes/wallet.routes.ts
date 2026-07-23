@@ -3,10 +3,11 @@ import { Router } from "express";
 import { protect } from "../middleware/auth.middleware.js";
 import validate from "../middleware/validate.js";
 
-import { deposit, getBalance, transfer, withdraw } from "../controllers/wallet.controller.js";
+import { deposit, getBalance } from "../controllers/wallet.controller.js";
 
 import { depositSchema, withdrawSchema } from "../validators/wallet.validator.js";
-import { transferSchema } from "../validators/transfer.validator.js";
+import { transferSchema } from "../validators/transaction.validator.js";
+import { transfer, withdraw } from "../controllers/transaction.controller.js";
 
 const router = Router();
 

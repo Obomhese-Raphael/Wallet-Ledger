@@ -6,6 +6,9 @@ import routes from "./routes/index.js";
 import walletRoutes from "./routes/wallet.routes.js";
 import transactionRoutes from "./routes/transaction.routes.js";
 
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger.js";
+
 dotenv.config();
 
 connectDB();
@@ -13,6 +16,8 @@ connectDB();
 const app = express();
 
 app.use(express.json());
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api/v1", routes);
 app.use("/api/v1/wallet", walletRoutes);
