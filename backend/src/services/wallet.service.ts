@@ -9,3 +9,4 @@ export const createWallet = async (userId: string) => {
 export const getWalletByUserId = async (userId: string) => { 
     return await Wallet.findOne({ userId });
 }
+
