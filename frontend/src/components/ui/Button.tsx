@@ -1,24 +1,50 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
 import clsx from "clsx";
+import type { ButtonHTMLAttributes } from "react";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
+  fullWidth?: boolean;
 }
 
-const Button = ({ children, loading, className, ...props }: ButtonProps) => {
+export default function Button({
+  children,
+  loading,
+  fullWidth,
+  className,
+  ...props
+}: Props) {
   return (
     <button
       {...props}
-      disabled={loading || props.disabled}
       className={clsx(
-        "w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60",
+        "rounded-xl",
+
+        "bg-indigo-600",
+
+        "hover:bg-indigo-700",
+
+        "text-white",
+
+        "font-semibold",
+
+        "transition",
+
+        "duration-200",
+
+        "px-5",
+
+        "py-3",
+
+        "shadow",
+
+        "disabled:opacity-50",
+
+        fullWidth && "w-full",
+
         className,
       )}
     >
-      {loading ? "Please wait..." : children}
+      {loading ? "Loading..." : children}
     </button>
   );
-};
-
-export default Button;
+}

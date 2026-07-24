@@ -4,8 +4,26 @@ interface Props {
   children: ReactNode;
 }
 
-const Card = ({ children }: Props) => {
-  return <div className="rounded-3xl bg-white p-10 shadow-xl">{children}</div>;
-};
+export default function Card({ children }: Props) {
+  return (
+    <div
+      className="
 
-export default Card;
+            rounded-3xl
+
+            bg-white
+
+            shadow-xl
+
+            border
+
+            border-slate-100
+
+            p-8
+
+            "
+    >
+      {children}
+    </div>
+  );
+}
