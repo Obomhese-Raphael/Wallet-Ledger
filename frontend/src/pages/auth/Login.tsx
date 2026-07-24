@@ -4,7 +4,7 @@ import { login } from "../../services/auth.service";
 const Login = () => {
   useEffect(() => {
     login({
-      email: "raphael@example.com",
+      email: "raphaelobomhese@example.com",
       password: "Password123!",
     })
       .then(console.log)
