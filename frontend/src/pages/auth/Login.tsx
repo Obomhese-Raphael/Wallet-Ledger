@@ -1,72 +1,96 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import AuthLayout from "../../components/auth/AuthLayout";
 import AuthCard from "../../components/auth/AuthCard";
-import Logo from "../../components/ui/Logo";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import SocialLogin from "../../components/auth/SocialLogin";
 
+import { login as loginService } from "../../services/auth.service";
+import { useAuth } from "../../context/AuthContext";
+
 export default function Login() {
+  const navigate = useNavigate();
+
+  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
+
   const [password, setPassword] = useState("");
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState("");
+
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    console.log({
-      email,
-      password,
-    });
+    setError("");
 
-    // TODO:
-    // Call login API here
-  };
+    if (!email || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await loginService({
+        email,
+        password,
+      });
+
+      login(response.data.token, response.data.user);
+
+      navigate("/dashboard");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message ?? "Invalid email or password.");
+      } else {
+        setError("Something went wrong.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <AuthLayout>
       <AuthCard>
-        <form onSubmit={handleLogin} className="space-y-8">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900">
-              Welcome Back
-            </h1>
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold">Welcome Back</h1>
 
-            <p className="text-slate-500 leading-relaxed">
-              Sign in to your account to manage your wallet, transfers and
-              transactions securely.
-            </p>
+            <p className="mt-2 text-slate-500">Sign in to continue.</p>
           </div>
 
-          <div className="space-y-5">
-            <Input
-              label="Email Address"
-              type="email"
-              placeholder="john@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+          <Input
+            label="Email"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-            <Input
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+          <Input
+            label="Password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-          <div className="flex justify-end">
-            <button
-              type="button"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition"
-            >
-              Forgot Password?
-            </button>
-          </div>
+          {error && (
+            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
 
-          <Button fullWidth>Sign In</Button>
+          <Button type="submit" fullWidth loading={loading}>
+            {loading ? "Signing In..." : "Sign In"}
+          </Button>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -82,15 +106,12 @@ export default function Login() {
 
           <SocialLogin />
 
-          <div className="text-center text-sm text-slate-500">
+          <p className="text-center text-sm text-slate-500">
             Don't have an account?{" "}
-            <Link
-              to="/register"
-              className="font-semibold text-indigo-600 hover:text-indigo-700 transition"
-            >
+            <Link to="/register" className="font-semibold text-indigo-600">
               Create one
             </Link>
-          </div>
+          </p>
         </form>
       </AuthCard>
     </AuthLayout>

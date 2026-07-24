@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: Props) {
   return (
     <div className="h-screen overflow-hidden grid lg:grid-cols-2 bg-slate-50 font-sans antialiased">
       {/* Left Side */}
-      <div className="hidden lg:flex flex-col justify-center bg-gradient-to-br from-indigo-700 via-indigo-600 to-violet-700 text-white px-12 xl:px-16">
+    <div className="hidden lg:flex flex-col justify-center bg-linear-to-br from-indigo-700 via-indigo-600 to-violet-700 text-white px-12 xl:px-16">
         <h1 className="text-5xl xl:text-6xl font-extrabold tracking-tight leading-none">
           Wallet <br />
           Ledger
