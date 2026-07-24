@@ -13,6 +13,8 @@ import Greeting from "../../components/dashboard/Greeting";
 
 import { calculateAnalytics } from "../../utils/analytics";
 
+import BalanceChart from "../../components/dashboard/BalanceChart";
+
 export default function Dashboard() {
   const { data: balanceData } = useQuery({
     queryKey: ["balance"],
@@ -34,6 +36,8 @@ export default function Dashboard() {
       <div className="space-y-8">
         <Greeting />
         <BalanceCard balance={balance} />
+
+        <BalanceChart transactions={transactions} currentBalance={balance} />
 
         <div className="grid gap-6 lg:grid-cols-4">
           <StatCard
