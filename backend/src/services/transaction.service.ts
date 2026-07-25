@@ -218,7 +218,6 @@ export const transferMoney = async(
 
     const transactions = await Transaction.create(
       [
-        // Sender transaction
         {
           accountId: senderAccount._id,
           type: "transfer_out",
@@ -227,8 +226,6 @@ export const transferMoney = async(
           status: "completed",
           description: description?.trim() || `Transfer to ${recipient.email}`,
         },
-
-        // Recipient transaction
         {
           accountId: recipientAccount._id,
           type: "transfer_in",
@@ -238,7 +235,10 @@ export const transferMoney = async(
           description: description?.trim() || `Transfer from ${sender.email}`,
         },
       ],
-      { session },
+      {
+        session,
+        ordered: true,
+      },
     );
 
     const createdTransaction = transactions[0];
