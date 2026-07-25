@@ -16,7 +16,8 @@ import { CheckCircle2, TriangleAlert } from "lucide-react";
 import { TbCurrencyNaira } from "react-icons/tb";
 
 import { useNavigate } from "react-router-dom";
-import { downloadReceipt } from "../../utils/downloadRecepits";
+import { useEffect } from "react";
+import { generateReceipt } from "../../utils/generateReceipt";
 
 
 export default function Transfer() {
@@ -25,6 +26,7 @@ export default function Transfer() {
   const [receiverEmail, setReceiverEmail] = useState("");
   const [recipient, setRecipient] = useState<any>(null);
 
+  const [transaction, setTransaction] = useState<any>(null)
   const [amount, setAmount] = useState("");
 
   const [searching, setSearching] = useState(false);
@@ -47,8 +49,11 @@ export default function Transfer() {
   const mutation = useMutation({
     mutationFn: transfer,
 
-    onSuccess: () => {
+    onSuccess: (response) => {
       toast.success("Transfer Successful");
+      console.log("OnSuccess Response: ", response);
+
+      setTransaction(response.data.data);
 
       queryClient.invalidateQueries({
         queryKey: ["balance"],
@@ -105,6 +110,27 @@ export default function Transfer() {
       setSearching(false);
     }
   }
+
+  useEffect(() => {
+    if (!receiverEmail) {
+      setRecipient(null);
+      return;
+    }
+
+    const trimmedEmail = receiverEmail.trim();
+
+    // Don't search until email looks valid
+    if (!trimmedEmail.includes("@") || !trimmedEmail.includes(".")) {
+      setRecipient(null);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      searchRecipient(trimmedEmail);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [receiverEmail]);
 
   function continueToAmount() {
     if (!recipient) {
@@ -175,8 +201,6 @@ export default function Transfer() {
                     value={receiverEmail}
                     onChange={(e) => {
                       setReceiverEmail(e.target.value);
-
-                      searchRecipient(e.target.value);
                     }}
                   />
 
@@ -631,7 +655,26 @@ export default function Transfer() {
                     <Button
                       variant="secondary"
                       fullWidth
-                      onClick={() => downloadReceipt("receipt")}
+                      disabled={!transaction}
+                      onClick={() => {
+                        if (!transaction) return;
+
+                        generateReceipt({
+                          recipient:
+                            `${recipient?.firstName ?? ""} ${recipient?.lastName ?? ""}`.trim() ||
+                            recipient?.name ||
+                            "Recipient",
+
+                          email: receiverEmail,
+                          amount: Number(amount),
+                          description,
+                          reference: transaction.reference,
+                          status: transaction.status,
+                          date: new Date(
+                            transaction.createdAt,
+                          ).toLocaleString(),
+                        });
+                      }}
                     >
                       Download Receipt
                     </Button>

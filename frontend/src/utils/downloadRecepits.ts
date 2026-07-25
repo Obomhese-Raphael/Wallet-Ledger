@@ -2,7 +2,9 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 export async function downloadReceipt(elementId: string) {
-  const element = document.getElementById(elementId);
+    const element = document.getElementById(elementId);
+    
+    console.log("Element For Reciept: ", element);
 
   if (!element) return;
 
