@@ -19,14 +19,13 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { generateReceipt } from "../../utils/generateReceipt";
 
-
 export default function Transfer() {
   const [step, setStep] = useState(0);
 
   const [receiverEmail, setReceiverEmail] = useState("");
   const [recipient, setRecipient] = useState<any>(null);
 
-  const [transaction, setTransaction] = useState<any>(null)
+  const [transaction, setTransaction] = useState<any>(null);
   const [amount, setAmount] = useState("");
 
   const [searching, setSearching] = useState(false);
@@ -50,10 +49,13 @@ export default function Transfer() {
     mutationFn: transfer,
 
     onSuccess: (response) => {
-      toast.success("Transfer Successful");
-      console.log("OnSuccess Response: ", response);
+      console.log(response);
 
-      setTransaction(response.data.data);
+      setTransaction(response.data);
+
+      console.log(response.data);
+
+      toast.success("Transfer Successful");
 
       queryClient.invalidateQueries({
         queryKey: ["balance"],
@@ -161,7 +163,7 @@ export default function Transfer() {
     mutation.mutate({
       recipientEmail: receiverEmail,
       amount: Number(amount),
-      description
+      description,
     });
   }
 
@@ -655,25 +657,35 @@ export default function Transfer() {
                     <Button
                       variant="secondary"
                       fullWidth
-                      disabled={!transaction}
                       onClick={() => {
-                        if (!transaction) return;
+                        try {
+                          console.log("Download clicked");
 
-                        generateReceipt({
-                          recipient:
-                            `${recipient?.firstName ?? ""} ${recipient?.lastName ?? ""}`.trim() ||
-                            recipient?.name ||
-                            "Recipient",
+                          generateReceipt({
+                            recipient:
+                              `${recipient?.firstName ?? ""} ${recipient?.lastName ?? ""}`.trim() ||
+                              recipient?.name ||
+                              "Recipient",
 
-                          email: receiverEmail,
-                          amount: Number(amount),
-                          description,
-                          reference: transaction.reference,
-                          status: transaction.status,
-                          date: new Date(
-                            transaction.createdAt,
-                          ).toLocaleString(),
-                        });
+                            email: receiverEmail,
+
+                            amount: Number(amount),
+
+                            description,
+
+                            reference: transaction.reference,
+
+                            status: transaction.status,
+
+                            date: new Date(
+                              transaction.createdAt,
+                            ).toLocaleString(),
+                          });
+
+                          console.log("Receipt generated");
+                        } catch (err) {
+                          console.error(err);
+                        }
                       }}
                     >
                       Download Receipt
