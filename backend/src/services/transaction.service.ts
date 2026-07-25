@@ -158,6 +158,7 @@ export const transferMoney = async(
   senderId: string,
   recipientEmail: string,
   amount: number,
+  description?: string,
 ) => {
   const session = await mongoose.startSession();
 
@@ -173,6 +174,12 @@ export const transferMoney = async(
 
     if (!senderAccount) {
       throw new Error("Sender's account not found.");
+    }
+
+    const sender = await User.findById(senderId).session(session);
+
+    if (!sender) {
+      throw new Error("Sender not found.");
     }
 
     // Find the recipient
@@ -207,21 +214,34 @@ export const transferMoney = async(
       throw new Error("Insufficient Funds.");
     }
 
-    const transaction = await Transaction.create(
+    const reference = generateReference();
+
+    const transactions = await Transaction.create(
       [
+        // Sender transaction
         {
           accountId: senderAccount._id,
-          type: "transfer",
+          type: "transfer_out",
           amount,
-          reference: generateReference(),
+          reference,
           status: "completed",
-          description: `Transfer to ${recipient.email}`,
+          description: description?.trim() || `Transfer to ${recipient.email}`,
+        },
+
+        // Recipient transaction
+        {
+          accountId: recipientAccount._id,
+          type: "transfer_in",
+          amount,
+          reference,
+          status: "completed",
+          description: description?.trim() || `Transfer from ${sender.email}`,
         },
       ],
       { session },
     );
 
-    const createdTransaction = transaction[0];
+    const createdTransaction = transactions[0];
 
     if (!createdTransaction) {
       throw new Error("Failed to create transaction");
@@ -232,7 +252,7 @@ export const transferMoney = async(
       fromAccountId: senderAccount._id.toString(),
       toAccountId: recipientAccount._id.toString(),
       amount,
-      description: `Transfer to ${recipient.email}`,
+      description: description?.trim() || `Transfer to ${recipient.email}`,
       session,
     });
 

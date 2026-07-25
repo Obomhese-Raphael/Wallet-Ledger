@@ -1,5 +1,9 @@
-import { ArrowDownCircle, ArrowRightLeft, ArrowUpCircle } from "lucide-react";
-
+import {
+  ArrowDownCircle,
+  ArrowUpCircle,
+  ArrowDownLeft,
+  ArrowUpRight,
+} from "lucide-react";
 import type { Transaction } from "../../types/transaction";
 
 interface Props {
@@ -7,6 +11,7 @@ interface Props {
 }
 
 export default function RecentTransactions({ transactions }: Props) {
+
   function getIcon(type: string) {
     switch (type) {
       case "deposit":
@@ -15,8 +20,33 @@ export default function RecentTransactions({ transactions }: Props) {
       case "withdraw":
         return <ArrowUpCircle className="text-red-500" size={22} />;
 
+      case "transfer_in":
+        return <ArrowDownLeft className="text-sky-600" size={22} />;
+
+      case "transfer_out":
+        return <ArrowUpRight className="text-amber-600" size={22} />;
+
       default:
-        return <ArrowRightLeft className="text-indigo-600" size={22} />;
+        return <ArrowDownCircle className="text-slate-500" size={22} />;
+    }
+  }
+
+  function getTitle(type: string) {
+    switch (type) {
+      case "deposit":
+        return "Deposit";
+
+      case "withdraw":
+        return "Withdrawal";
+
+      case "transfer_in":
+        return "Money Received";
+
+      case "transfer_out":
+        return "Money Sent";
+
+      default:
+        return type;
     }
   }
 
@@ -42,8 +72,7 @@ export default function RecentTransactions({ transactions }: Props) {
               </div>
 
               <div>
-                <h3 className="font-semibold capitalize">{transaction.type}</h3>
-
+                <h3 className="font-semibold">{getTitle(transaction.type)}</h3>
                 <p className="text-sm text-slate-500">
                   {transaction.description}
                 </p>
@@ -57,11 +86,16 @@ export default function RecentTransactions({ transactions }: Props) {
                     ? "text-emerald-600"
                     : transaction.type === "withdraw"
                       ? "text-red-500"
-                      : "text-indigo-600"
+                      : transaction.type === "transfer_in"
+                        ? "text-sky-600"
+                        : "text-amber-600"
                 }`}
               >
-                {transaction.type === "deposit" ? "+" : "-"}₦
-                {transaction.amount.toLocaleString()}
+                {transaction.type === "deposit" ||
+                transaction.type === "transfer_in"
+                  ? "+"
+                  : "-"}
+                ₦{transaction.amount.toLocaleString()}
               </p>
 
               <p className="text-xs text-slate-400">

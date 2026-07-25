@@ -125,12 +125,13 @@ export const transfer = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
 
-    const { recipientEmail, amount } = req.body;
+    const { recipientEmail, amount , description} = req.body;
 
     const transaction = await transferMoney(
       user._id.toString(),
       recipientEmail,
       amount,
+      description
     );
 
     return successResponse(res, "Transfer Successful", transaction, 201);

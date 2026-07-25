@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { api } from "../api/axios";
 
 import type { User } from "../types/auth";
 
@@ -6,6 +7,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  loading: boolean;
 
   login: (token: string, user: User) => void;
   logout: () => void;
@@ -18,13 +20,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const [user, setUser] = useState<User | null>(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
+    async function initializeAuth() {
+      const savedToken = localStorage.getItem("token");
 
-    if (savedToken) setToken(savedToken);
+      if (!savedToken) {
+        setLoading(false);
+        return;
+      }
 
-    if (savedUser) setUser(JSON.parse(savedUser));
+      setToken(savedToken);
+
+      try {
+        const response = await api.get("/auth/currentUser");
+
+        setUser(response.data.data);
+
+        localStorage.setItem("user", JSON.stringify(response.data.data));
+      } catch {
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    initializeAuth();
   }, []);
 
   function login(token: string, user: User) {
@@ -49,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         token,
         isAuthenticated: !!token,
+        loading,
         login,
         logout,
       }}

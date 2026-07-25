@@ -1,7 +1,7 @@
 export interface Transaction {
   _id: string;
   accountId: string;
-  type: "deposit" | "withdraw" | "transfer";
+  type: "deposit" | "withdraw" | "transfer_in" | "transfer_out";
   amount: number;
   status: string;
   reference: string;

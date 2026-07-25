@@ -22,22 +22,28 @@ export function calculateAnalytics(transactions: Transaction[]): Analytics {
 
     switch (transaction.type) {
       case "deposit":
+      case "transfer_in":
         totalDeposits += transaction.amount;
         break;
 
       case "withdraw":
+      case "transfer_out":
         totalWithdrawals += transaction.amount;
-        break;
-
-      case "transfer":
-        totalTransfers += transaction.amount;
         break;
     }
   }
 
+  // Money sent to another user
+  totalTransfers = transactions
+    .filter((t) => t.type === "transfer_out")
+    .reduce((sum, t) => sum + t.amount, 0);
+
   const totalTransactions = transactions.length;
 
-  const totalAmount = totalDeposits + totalWithdrawals + totalTransfers;
+  const totalAmount = transactions.reduce(
+    (sum, transaction) => sum + transaction.amount,
+    0,
+  );
 
   const averageTransaction =
     totalTransactions === 0 ? 0 : Math.round(totalAmount / totalTransactions);
