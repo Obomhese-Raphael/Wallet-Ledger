@@ -49,11 +49,8 @@ export default function Transfer() {
     mutationFn: transfer,
 
     onSuccess: (response) => {
-      console.log(response);
 
       setTransaction(response.data);
-
-      console.log(response.data);
 
       toast.success("Transfer Successful");
 
@@ -659,7 +656,6 @@ export default function Transfer() {
                       fullWidth
                       onClick={() => {
                         try {
-                          console.log("Download clicked");
 
                           generateReceipt({
                             recipient:
@@ -682,7 +678,6 @@ export default function Transfer() {
                             ).toLocaleString(),
                           });
 
-                          console.log("Receipt generated");
                         } catch (err) {
                           console.error(err);
                         }

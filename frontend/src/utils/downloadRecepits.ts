@@ -3,8 +3,6 @@ import jsPDF from "jspdf";
 
 export async function downloadReceipt(elementId: string) {
     const element = document.getElementById(elementId);
-    
-    console.log("Element For Reciept: ", element);
 
   if (!element) return;
 
