@@ -28,11 +28,12 @@ export default function BalanceChart({ transactions, currentBalance }: Props) {
 
     switch (tx.type) {
       case "deposit":
+      case "transfer_in":
         balance -= tx.amount;
         break;
 
       case "withdraw":
-      case "transfer":
+      case "transfer_out":
         balance += tx.amount;
         break;
     }
@@ -45,11 +46,12 @@ export default function BalanceChart({ transactions, currentBalance }: Props) {
   for (const tx of orderedTransactions) {
     switch (tx.type) {
       case "deposit":
+      case "transfer_in":
         runningBalance += tx.amount;
         break;
 
       case "withdraw":
-      case "transfer":
+      case "transfer_out":
         runningBalance -= tx.amount;
         break;
     }
@@ -58,7 +60,15 @@ export default function BalanceChart({ transactions, currentBalance }: Props) {
       date: new Date(tx.createdAt).toLocaleString("en-NG", {
         day: "numeric",
         month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      fullDate: new Date(tx.createdAt).toLocaleString("en-NG", {
+        day: "numeric",
+        month: "short",
         year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       }),
       balance: runningBalance,
       type: tx.type,
@@ -77,7 +87,10 @@ export default function BalanceChart({ transactions, currentBalance }: Props) {
 
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData}>
+          <AreaChart
+            data={chartData}
+            margin={{ top: 5, right: 10, bottom: 20, left: 0 }}
+          >
             <defs>
               <linearGradient id="walletGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.35} />
@@ -88,7 +101,14 @@ export default function BalanceChart({ transactions, currentBalance }: Props) {
 
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
 
-            <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 11 }}
+              angle={-35}
+              textAnchor="end"
+              height={50}
+              interval={Math.max(0, Math.ceil(chartData.length / 8) - 1)}
+            />
 
             <YAxis
               tickFormatter={(value) => `₦${Number(value).toLocaleString()}`}
@@ -101,6 +121,9 @@ export default function BalanceChart({ transactions, currentBalance }: Props) {
                 border: "none",
                 boxShadow: "0 10px 30px rgba(0,0,0,.15)",
               }}
+              labelFormatter={(_, payload) =>
+                payload?.[0]?.payload?.fullDate ?? ""
+              }
               formatter={(value) => [
                 `₦${Number(value).toLocaleString()}`,
                 "Balance",
@@ -108,7 +131,7 @@ export default function BalanceChart({ transactions, currentBalance }: Props) {
             />
 
             <Area
-              type="natural"
+              type="monotone"
               dataKey="balance"
               stroke="#4f46e5"
               strokeWidth={3}
