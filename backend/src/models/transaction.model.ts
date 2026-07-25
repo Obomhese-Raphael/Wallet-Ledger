@@ -34,7 +34,6 @@ const transactionSchema = new Schema(
     reference: {
       type: String,
       required: true,
-      unique: true,
     },
 
     description: {
