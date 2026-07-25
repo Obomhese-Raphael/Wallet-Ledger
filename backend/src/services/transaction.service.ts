@@ -224,15 +224,24 @@ export const transferMoney = async(
           amount,
           reference,
           status: "completed",
+
           description: description?.trim() || `Transfer to ${recipient.email}`,
+
+          recipientName: `${recipient.firstName} ${recipient.lastName}`,
+          recipientEmail: recipient.email,
         },
+
         {
           accountId: recipientAccount._id,
           type: "transfer_in",
           amount,
           reference,
           status: "completed",
+
           description: description?.trim() || `Transfer from ${sender.email}`,
+
+          senderName: `${sender.firstName} ${sender.lastName}`,
+          senderEmail: sender.email,
         },
       ],
       {

@@ -10,12 +10,7 @@ const transactionSchema = new Schema(
 
     type: {
       type: String,
-      enum: [
-        "deposit",
-        "withdraw",
-        "transfer_in",
-        "transfer_out",
-    ],
+      enum: ["deposit", "withdraw", "transfer_in", "transfer_out"],
       required: true,
     },
 
@@ -39,6 +34,21 @@ const transactionSchema = new Schema(
     description: {
       type: String,
       default: "",
+    },
+    recipientName: {
+      type: String,
+    },
+
+    recipientEmail: {
+      type: String,
+    },
+
+    senderName: {
+      type: String,
+    },
+
+    senderEmail: {
+      type: String,
     },
   },
   {

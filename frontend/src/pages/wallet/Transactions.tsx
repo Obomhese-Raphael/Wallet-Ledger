@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
+import type { Transaction } from "../../types/transaction";
+
 import {
   Wallet,
   ArrowDownCircle,
@@ -12,6 +14,7 @@ import {
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import TransactionCard from "../../components/transactions/TransactionCard";
 import { getTransactions } from "../../services/transaction.service";
+import TransactionDetailsModal from "../../components/transactions/TransactionDetailModal";
 
 export default function Transactions() {
   const { data, isLoading, isError } = useQuery({
@@ -26,7 +29,10 @@ export default function Transactions() {
 
   const [filter, setFilter] = useState<
     "all" | "deposit" | "withdraw" | "transfer"
-  >("all");
+    >("all");
+  
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Transaction | null>(null);
 
   if (isLoading) {
     return (
@@ -249,6 +255,7 @@ export default function Transactions() {
               <TransactionCard
                 key={transaction._id}
                 transaction={transaction}
+                onClick={() => setSelectedTransaction(transaction)}
               />
             ))
           )}
@@ -265,6 +272,12 @@ export default function Transactions() {
           </p>
         </div>
       </div>
+
+      <TransactionDetailsModal
+        open={selectedTransaction !== null}
+        transaction={selectedTransaction}
+        onClose={() => setSelectedTransaction(null)}
+      />
     </DashboardLayout>
   );
 }
