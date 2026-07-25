@@ -27,16 +27,35 @@ export default function TransactionDetailsModal({
 }: Props) {
   if (!transaction) return null;
 
-  function copyReference() {
-    if (!transaction) return;
+  const tx = transaction;
 
-    navigator.clipboard.writeText(transaction.reference);
+  function copyReference() {
+    navigator.clipboard.writeText(tx.reference);
 
     toast.success("Reference copied");
   }
 
+  function getTitle() {
+    switch (tx.type) {
+      case "deposit":
+        return "Deposit";
+
+      case "withdraw":
+        return "Withdrawal";
+
+      case "transfer_out":
+        return "Transfer Sent";
+
+      case "transfer_in":
+        return "Transfer Received";
+
+      default:
+        return "Transaction";
+    }
+  }
+
   function getIcon() {
-    switch (transaction.type) {
+    switch (tx.type) {
       case "deposit":
         return <ArrowDownCircle size={64} className="text-emerald-600" />;
 
@@ -52,15 +71,68 @@ export default function TransactionDetailsModal({
   }
 
   function amountColor() {
-    return transaction.type === "deposit" || transaction.type === "transfer_in"
+    return tx.type === "deposit" || tx.type === "transfer_in"
       ? "text-emerald-600"
       : "text-red-500";
   }
 
   function amountPrefix() {
-    return transaction.type === "deposit" || transaction.type === "transfer_in"
-      ? "+"
-      : "-";
+    return tx.type === "deposit" || tx.type === "transfer_in" ? "+" : "-";
+  }
+
+  function statusStyles() {
+    switch (tx.status) {
+      case "completed":
+        return "bg-emerald-100 text-emerald-700";
+
+      case "pending":
+        return "bg-yellow-100 text-yellow-700";
+
+      default:
+        return "bg-red-100 text-red-700";
+    }
+  }
+
+  const isOutgoingTransfer = tx.type === "transfer_out";
+  const isIncomingTransfer = tx.type === "transfer_in";
+
+  const contactName = isOutgoingTransfer
+    ? tx.recipientName
+    : isIncomingTransfer
+      ? tx.senderName
+      : undefined;
+
+  const contactEmail = isOutgoingTransfer
+    ? tx.recipientEmail
+    : isIncomingTransfer
+      ? tx.senderEmail
+      : undefined;
+
+  const contactLabel = isOutgoingTransfer ? "Recipient" : "Sender";
+
+  const dateObj = new Date(tx.createdAt);
+
+  const dateStr = dateObj.toLocaleDateString(undefined, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+  const timeStr = dateObj.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  function handleDownload() {
+    generateReceipt({
+      recipient: contactName ?? "-",
+      email: contactEmail ?? "-",
+      amount: tx.amount,
+      description: tx.description,
+      reference: tx.reference,
+      status: tx.status,
+      date: dateObj.toLocaleString(),
+    });
   }
 
   return (
@@ -99,30 +171,35 @@ export default function TransactionDetailsModal({
               left-1/2
               top-1/2
               z-50
+              max-h-[90vh]
               w-[95%]
               max-w-lg
               -translate-x-1/2
               -translate-y-1/2
+              overflow-y-auto
               rounded-3xl
               bg-white
               shadow-2xl
             "
           >
+            {/* Header */}
             <div className="flex items-center justify-between border-b p-6">
               <div>
-                <h2 className="text-2xl font-bold">Transaction Details</h2>
+                <h2 className="text-2xl font-bold">{getTitle()}</h2>
 
-                <p className="text-slate-500">
-                  {transaction.type.replace("_", " ")}
-                </p>
+                <p className="text-slate-500">Transaction Details</p>
               </div>
 
-              <button onClick={onClose}>
+              <button
+                onClick={onClose}
+                className="rounded-full p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              >
                 <X />
               </button>
             </div>
 
             <div className="space-y-6 p-6">
+              {/* Icon + Amount + Status */}
               <div className="text-center">
                 <div className="flex justify-center">
                   <div className="rounded-full bg-slate-100 p-5">
@@ -130,71 +207,76 @@ export default function TransactionDetailsModal({
                   </div>
                 </div>
 
-                <p className="mt-6 text-slate-500">Transaction Amount</p>
-
-                <h1 className={`mt-2 text-5xl font-extrabold ${amountColor()}`}>
-                  {amountPrefix()}₦{transaction.amount.toLocaleString()}
+                <h1 className={`mt-6 text-5xl font-extrabold ${amountColor()}`}>
+                  {amountPrefix()}₦{tx.amount.toLocaleString()}
                 </h1>
+
+                <span
+                  className={`mt-4 inline-block rounded-full px-4 py-1 text-sm font-semibold capitalize ${statusStyles()}`}
+                >
+                  {tx.status}
+                </span>
               </div>
 
+              {/* Recipient / Sender */}
+              {(isOutgoingTransfer || isIncomingTransfer) && contactName && (
+                <>
+                  <hr className="border-slate-100" />
+
+                  <div className="grid gap-4">
+                    <InfoRow label={contactLabel} value={contactName} />
+
+                    {contactEmail && (
+                      <InfoRow label="Email" value={contactEmail} />
+                    )}
+                  </div>
+                </>
+              )}
+
+              <hr className="border-slate-100" />
+
+              {/* Core Details */}
               <div className="grid gap-4">
-                <InfoRow label="Reference" value={transaction.reference} />
-
-                <InfoRow label="Description" value={transaction.description} />
-
                 <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
-                  <span className="font-medium text-slate-500">Status</span>
+                  <span className="font-medium text-slate-500">Reference</span>
 
-                  <span
-                    className={`
-      rounded-full
-      px-4
-      py-1
-      text-sm
-      font-semibold
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-slate-900">
+                      {tx.reference}
+                    </span>
 
-      ${
-        transaction.status === "completed"
-          ? "bg-emerald-100 text-emerald-700"
-          : transaction.status === "pending"
-            ? "bg-yellow-100 text-yellow-700"
-            : "bg-red-100 text-red-700"
-      }
-    `}
-                  >
-                    {transaction.status}
-                  </span>
+                    <button
+                      onClick={copyReference}
+                      className="rounded-full p-1 text-slate-400 transition hover:bg-slate-200 hover:text-slate-700"
+                      aria-label="Copy reference"
+                    >
+                      <Copy size={16} />
+                    </button>
+                  </div>
                 </div>
 
-                <InfoRow
-                  label="Date"
-                  value={new Date(transaction.createdAt).toLocaleString()}
-                />
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+                  <span className="font-medium text-slate-500">Date</span>
+
+                  <div className="text-right">
+                    <p className="font-semibold text-slate-900">{dateStr}</p>
+
+                    <p className="text-sm text-slate-500">{timeStr}</p>
+                  </div>
+                </div>
+
+                {tx.description && (
+                  <InfoRow label="Description" value={tx.description} />
+                )}
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <Button variant="secondary" onClick={copyReference}>
-                  <Copy size={18} />
-                  Copy Ref
-                </Button>
+              <hr className="border-slate-100" />
 
-                <Button
-                  onClick={() =>
-                    generateReceipt({
-                      recipient: "-",
-                      email: "-",
-                      amount: transaction.amount,
-                      description: transaction.description,
-                      reference: transaction.reference,
-                      status: transaction.status,
-                      date: new Date(transaction.createdAt).toLocaleString(),
-                    })
-                  }
-                >
-                  <Download size={18} />
-                  Receipt
-                </Button>
-              </div>
+              {/* Download Receipt */}
+              <Button fullWidth onClick={handleDownload}>
+                <Download size={18} />
+                Download Receipt
+              </Button>
             </div>
           </motion.div>
         </>
@@ -213,7 +295,7 @@ function InfoRow({ label, value }: RowProps) {
     <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
       <span className="font-medium text-slate-500">{label}</span>
 
-      <span className="font-semibold text-slate-900 text-right">{value}</span>
+      <span className="text-right font-semibold text-slate-900">{value}</span>
     </div>
   );
 }

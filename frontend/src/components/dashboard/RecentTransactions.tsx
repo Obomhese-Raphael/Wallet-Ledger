@@ -5,12 +5,15 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import type { Transaction } from "../../types/transaction";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   transactions: Transaction[];
 }
 
 export default function RecentTransactions({ transactions }: Props) {
+
+  const navigate = useNavigate();
 
   function getIcon(type: string) {
     switch (type) {
@@ -55,7 +58,7 @@ export default function RecentTransactions({ transactions }: Props) {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold">Recent Transactions</h2>
 
-        <button className="text-sm font-semibold text-indigo-600 hover:text-indigo-700">
+        <button onClick={() => navigate("/transactions")} className="text-sm font-semibold text-indigo-600 hover:text-indigo-700">
           View All
         </button>
       </div>

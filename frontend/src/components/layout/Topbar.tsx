@@ -1,14 +1,19 @@
 import { Bell, Search } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Topbar() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-slate-200/70 bg-white/70 px-8 backdrop-blur-xl">
       {/* Left */}
 
-      <div className="flex items-center gap-6">
+      <div
+        className="flex cursor-pointer items-center gap-6"
+        onClick={() => navigate("/")}
+      >
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
 

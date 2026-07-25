@@ -1,22 +1,33 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import type { Transaction } from "../../types/transaction";
-
 import {
   Wallet,
   ArrowDownCircle,
   ArrowUpCircle,
   ArrowRightLeft,
-  Search,
 } from "lucide-react";
 
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import TransactionCard from "../../components/transactions/TransactionCard";
+import TransactionSearch from "../../components/transactions/TransactionSearch";
+
+
 import { getTransactions } from "../../services/transaction.service";
+import type { Transaction } from "../../types/transaction";
+import type { TransactionStatusFilter, TransactionTypeFilter } from "../../components/transactions/TransactionFilters";
+import TransactionFilterBar from "../../components/transactions/TransactionFilters";
 import TransactionDetailsModal from "../../components/transactions/TransactionDetailModal";
 
 export default function Transactions() {
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState<TransactionTypeFilter>("all");
+  const [statusFilter, setStatusFilter] =
+    useState<TransactionStatusFilter>("all");
+
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Transaction | null>(null);
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["transactions"],
     queryFn: getTransactions,
@@ -25,14 +36,33 @@ export default function Transactions() {
   const transactions = data?.data.transactions ?? [];
   const pagination = data?.data.pagination;
 
-  const [search, setSearch] = useState("");
+  const filteredTransactions = useMemo(() => {
+    const query = search.trim().toLowerCase();
 
-  const [filter, setFilter] = useState<
-    "all" | "deposit" | "withdraw" | "transfer"
-    >("all");
-  
-  const [selectedTransaction, setSelectedTransaction] =
-    useState<Transaction | null>(null);
+    return transactions.filter((transaction) => {
+      const matchesType =
+        typeFilter === "all" || transaction.type === typeFilter;
+
+      const matchesStatus =
+        statusFilter === "all" || transaction.status === statusFilter;
+
+      if (!matchesType || !matchesStatus) return false;
+
+      if (!query) return true;
+
+      const haystack = [
+        transaction.recipientName,
+        transaction.recipientEmail,
+        transaction.senderName,
+        transaction.senderEmail,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(query);
+    });
+  }, [transactions, search, typeFilter, statusFilter]);
 
   if (isLoading) {
     return (
@@ -96,26 +126,6 @@ export default function Transactions() {
 
   const net = totalIn - totalOut;
 
-  const filteredTransactions = useMemo(() => {
-    return transactions.filter((transaction) => {
-      const matchesSearch =
-        transaction.description.toLowerCase().includes(search.toLowerCase()) ||
-        transaction.reference.toLowerCase().includes(search.toLowerCase());
-
-      const matchesFilter =
-        filter === "all"
-          ? true
-          : filter === "deposit"
-            ? transaction.type === "deposit"
-            : filter === "withdraw"
-              ? transaction.type === "withdraw"
-              : transaction.type === "transfer_in" ||
-                transaction.type === "transfer_out";
-
-      return matchesSearch && matchesFilter;
-    });
-  }, [transactions, search, filter]);
-
   return (
     <DashboardLayout>
       <div className="mx-auto max-w-6xl space-y-8">
@@ -150,7 +160,7 @@ export default function Transactions() {
             title="Transactions"
             value={transactions.length}
             subtitle="Loaded"
-            icon={<Wallet size={15} />}
+            icon={<Wallet size={22} />}
             color="bg-indigo-100 text-indigo-600"
           />
 
@@ -158,7 +168,7 @@ export default function Transactions() {
             title="Money In"
             value={`₦${totalIn.toLocaleString()}`}
             subtitle="Deposits & Incoming"
-            icon={<ArrowDownCircle size={15} />}
+            icon={<ArrowDownCircle size={22} />}
             color="bg-emerald-100 text-emerald-600"
           />
 
@@ -166,7 +176,7 @@ export default function Transactions() {
             title="Money Out"
             value={`₦${totalOut.toLocaleString()}`}
             subtitle="Withdrawals & Transfers"
-            icon={<ArrowUpCircle size={15} />}
+            icon={<ArrowUpCircle size={22} />}
             color="bg-red-100 text-red-500"
           />
 
@@ -174,92 +184,54 @@ export default function Transactions() {
             title="Net Flow"
             value={`₦${net.toLocaleString()}`}
             subtitle={net >= 0 ? "Positive" : "Negative"}
-            icon={<ArrowRightLeft size={15} />}
+            icon={<ArrowRightLeft size={22} />}
             color="bg-sky-100 text-sky-600"
           />
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div className="relative w-full lg:max-w-md">
-              <Search
-                size={18}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-              />
+        {/* Search + Filter Bar */}
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <TransactionSearch value={search} onChange={setSearch} />
 
-              <input
-                type="text"
-                placeholder="Search description or reference..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="
-          w-full
-          rounded-2xl
-          border
-          border-slate-200
-          bg-slate-50
-          py-3
-          pl-11
-          pr-4
-          outline-none
-          transition
-          focus:border-indigo-500
-          focus:bg-white
-        "
-              />
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              {["all", "deposit", "transfer", "withdraw"].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => setFilter(item as typeof filter)}
-                  className={`
-            rounded-full
-            px-5
-            py-2
-            text-sm
-            font-semibold
-            transition
-
-            ${
-              filter === item
-                ? "bg-indigo-600 text-white shadow"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }
-          `}
-                >
-                  {item.charAt(0).toUpperCase() + item.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
+          <TransactionFilterBar
+            typeFilter={typeFilter}
+            statusFilter={statusFilter}
+            onTypeChange={setTypeFilter}
+            onStatusChange={setStatusFilter}
+          />
         </div>
 
         {/* Transaction List */}
-        <div className="space-y-4">
-          {filteredTransactions.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-white py-20 text-center">
-              <div className="text-5xl">🔍</div>
+        {filteredTransactions.length === 0 ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+            <div className="text-5xl">🔍</div>
 
-              <h2 className="mt-5 text-2xl font-bold">
-                No matching transactions
-              </h2>
+            <h2 className="mt-4 text-xl font-bold">No matching transactions</h2>
 
-              <p className="mt-2 text-slate-500">
-                Try another search or change the filter.
-              </p>
-            </div>
-          ) : (
-            filteredTransactions.map((transaction) => (
-              <TransactionCard
+            <p className="mt-2 text-slate-500">
+              Try adjusting your search or filters.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredTransactions.map((transaction) => (
+              <div
                 key={transaction._id}
-                transaction={transaction}
+                role="button"
+                tabIndex={0}
                 onClick={() => setSelectedTransaction(transaction)}
-              />
-            ))
-          )}
-        </div>
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setSelectedTransaction(transaction);
+                  }
+                }}
+                className="cursor-pointer transition hover:-translate-y-0.5"
+              >
+                <TransactionCard transaction={transaction} />
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Pagination Footer */}
         <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -274,7 +246,7 @@ export default function Transactions() {
       </div>
 
       <TransactionDetailsModal
-        open={selectedTransaction !== null}
+        open={!!selectedTransaction}
         transaction={selectedTransaction}
         onClose={() => setSelectedTransaction(null)}
       />

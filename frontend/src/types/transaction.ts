@@ -8,6 +8,10 @@ export interface Transaction {
   description: string;
   createdAt: string;
   updatedAt: string;
+  recipientName?: string;
+  recipientEmail?: string;
+  senderName?: string;
+  senderEmail?: string;
 }
 
 export interface TransactionsResponse {
