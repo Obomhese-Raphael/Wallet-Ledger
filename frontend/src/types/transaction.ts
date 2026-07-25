@@ -3,7 +3,7 @@ export interface Transaction {
   accountId: string;
   type: "deposit" | "withdraw" | "transfer_in" | "transfer_out";
   amount: number;
-  status: string;
+  status: "completed" | "pending" | "failed";
   reference: string;
   description: string;
   createdAt: string;

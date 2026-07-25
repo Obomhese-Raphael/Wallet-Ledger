@@ -120,19 +120,96 @@ export default function Deposit() {
               </p>
 
               <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                <div className="flex h-20 items-center justify-center rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+                <div
+                  onClick={() =>
+                    toast("💳 Visa deposits arrive in Wallet Ledger v1.1!", {
+                      icon: "🚀",
+                    })
+                  }
+                  className="
+    flex
+    h-20
+    cursor-pointer
+    items-center
+    justify-center
+    rounded-2xl
+    border
+    bg-white
+    shadow-sm
+    transition
+    hover:-translate-y-1
+    hover:shadow-md
+  "
+                >
                   <FaCcVisa size={42} className="text-blue-700" />
                 </div>
-
-                <div className="flex h-20 items-center justify-center rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+                <div
+                  onClick={() =>
+                    toast("💳 Visa deposits arrive in Wallet Ledger v1.1!", {
+                      icon: "🚀",
+                    })
+                  }
+                  className="
+    flex
+    h-20
+    cursor-pointer
+    items-center
+    justify-center
+    rounded-2xl
+    border
+    bg-white
+    shadow-sm
+    transition
+    hover:-translate-y-1
+    hover:shadow-md
+  "
+                >
                   <FaPaypal size={42} className="text-sky-600" />
                 </div>
-
-                <div className="flex h-20 items-center justify-center rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+                <div
+                  onClick={() =>
+                    toast("💳 Visa deposits arrive in Wallet Ledger v1.1!", {
+                      icon: "🚀",
+                    })
+                  }
+                  className="
+    flex
+    h-20
+    cursor-pointer
+    items-center
+    justify-center
+    rounded-2xl
+    border
+    bg-white
+    shadow-sm
+    transition
+    hover:-translate-y-1
+    hover:shadow-md
+  "
+                >
                   <FaCcMastercard size={42} className="text-red-500" />
                 </div>
-
-                <div className="flex h-20 items-center justify-center rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+                <div
+                  onClick={() =>
+                    toast("💳 Visa deposits arrive in Wallet Ledger v1.1!", {
+                      icon: "🚀",
+                    })
+                  }
+                  className="
+    flex
+    h-20
+    cursor-pointer
+    items-center
+    justify-center
+    rounded-2xl
+    border
+    bg-white
+    shadow-sm
+    transition
+    hover:-translate-y-1
+    hover:shadow-md
+  "
+                >
                   <SiPayoneer size={38} className="text-orange-500" />
                 </div>
               </div>
