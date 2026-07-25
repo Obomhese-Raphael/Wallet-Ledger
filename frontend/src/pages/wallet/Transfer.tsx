@@ -15,6 +15,10 @@ import { transfer, getBalance } from "../../services/wallet.service";
 import { CheckCircle2, TriangleAlert } from "lucide-react";
 import { TbCurrencyNaira } from "react-icons/tb";
 
+import { useNavigate } from "react-router-dom";
+import { downloadReceipt } from "../../utils/downloadRecepits";
+
+
 export default function Transfer() {
   const [step, setStep] = useState(0);
 
@@ -26,6 +30,8 @@ export default function Transfer() {
   const [searching, setSearching] = useState(false);
   const [sameErrorMessage, setSameErrorMessage] = useState("");
   const [description, setDescription] = useState("");
+
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -395,6 +401,243 @@ export default function Transfer() {
 
                     <Button fullWidth onClick={continueToReview}>
                       Continue
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* STEP 3 - REVIEW */}
+
+            {step === 2 && (
+              <motion.div
+                key="review"
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.35 }}
+              >
+                <div className="space-y-8">
+                  <div>
+                    <h2 className="text-3xl font-bold">Review Transfer</h2>
+
+                    <p className="mt-2 text-slate-500">
+                      Double-check the transfer details before confirming.
+                    </p>
+                  </div>
+
+                  {/* Recipient */}
+
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white">
+                        <UserRound size={24} />
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-bold">
+                          {recipient.firstName} {recipient.lastName}
+                        </h3>
+
+                        <p className="text-sm text-slate-500">
+                          {recipient.email}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Review Card */}
+
+                  <div className="space-y-5 rounded-2xl bg-slate-50 p-6">
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Amount</span>
+
+                      <span className="font-bold">
+                        ₦{Number(amount).toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Description</span>
+
+                      <span className="font-medium text-right">
+                        {description.trim() ? description : "No description"}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Transfer Fee</span>
+
+                      <span className="font-bold text-emerald-600">FREE</span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Remaining Balance</span>
+
+                      <span className="font-bold text-indigo-600">
+                        ₦{(balance - Number(amount)).toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Status</span>
+
+                      <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">
+                        Instant Transfer
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Warning */}
+
+                  <div className="flex gap-4 rounded-2xl bg-amber-50 p-5">
+                    <TriangleAlert className="text-amber-500" />
+
+                    <p className="text-sm text-amber-700">
+                      Transfers cannot be reversed after they have been
+                      confirmed. Please ensure the recipient and amount are
+                      correct.
+                    </p>
+                  </div>
+
+                  {/* Buttons */}
+
+                  <div className="flex gap-4">
+                    <Button
+                      variant="secondary"
+                      fullWidth
+                      onClick={() => setStep(1)}
+                    >
+                      Back
+                    </Button>
+
+                    <Button
+                      fullWidth
+                      onClick={confirmTransfer}
+                      disabled={mutation.isPending}
+                    >
+                      {mutation.isPending
+                        ? "Processing..."
+                        : "Confirm Transfer"}
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* STEP 4 - SUCCESS */}
+
+            {step === 3 && (
+              <motion.div
+                key="success"
+                initial={{
+                  opacity: 0,
+                  scale: 0.9,
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.9,
+                }}
+                transition={{
+                  duration: 0.35,
+                }}
+              >
+                <div className="space-y-8 text-center">
+                  {/* Success Icon */}
+
+                  <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-emerald-100">
+                    <CheckCircle2 size={72} className="text-emerald-500" />
+                  </div>
+
+                  {/* Heading */}
+
+                  <div>
+                    <h2 className="text-4xl font-bold">
+                      Transfer Successful 🎉
+                    </h2>
+
+                    <p className="mt-3 text-slate-500">
+                      Your transfer has been completed successfully.
+                    </p>
+                  </div>
+
+                  {/* Receipt */}
+
+                  <div
+                    id="receipt"
+                    className="rounded-3xl border border-slate-200 bg-slate-50 p-6"
+                  >
+                    <div className="flex justify-between py-3 border-b border-slate-200">
+                      <span className="text-slate-500">Recipient</span>
+
+                      <span className="font-semibold">
+                        {recipient.firstName} {recipient.lastName}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between py-3 border-b border-slate-200">
+                      <span className="text-slate-500">Amount</span>
+
+                      <span className="font-bold text-lg text-emerald-600">
+                        ₦{Number(amount).toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between py-3 border-b border-slate-200">
+                      <span className="text-slate-500">Description</span>
+
+                      <span className="font-medium">
+                        {description || "No description"}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between py-3 border-b border-slate-200">
+                      <span className="text-slate-500">Status</span>
+
+                      <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
+                        Completed
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between pt-3">
+                      <span className="text-slate-500">Date</span>
+
+                      <span className="font-medium">
+                        {new Date().toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <Button
+                      variant="secondary"
+                      fullWidth
+                      onClick={() => {
+                        setStep(0);
+                        setRecipient(null);
+                        setReceiverEmail("");
+                        setAmount("");
+                        setDescription("");
+                      }}
+                    >
+                      New Transfer
+                    </Button>
+
+                    <Button
+                      variant="secondary"
+                      fullWidth
+                      onClick={() => downloadReceipt("receipt")}
+                    >
+                      Download Receipt
+                    </Button>
+
+                    <Button fullWidth onClick={() => navigate("/dashboard")}>
+                      Dashboard
                     </Button>
                   </div>
                 </div>
