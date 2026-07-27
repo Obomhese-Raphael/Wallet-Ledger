@@ -16,11 +16,26 @@ Built with React, TypeScript, Node.js, Express, and MongoDB.
 
 </div>
 
+<div align="center">
+  <img width="947" height="412" alt="image" src="https://github.com/user-attachments/assets/958cf06f-6bce-4350-b313-af2fbd3d3b3f" />
+
+</div>
+
 ---
 
 ## Overview
 
 Wallet Ledger is a full-stack digital wallet application that lets users deposit funds, transfer money to other users by email lookup, and review a complete transaction history through a banking-inspired interface. Balances are backed by a **double-entry ledger**, and every wallet-mutating operation runs inside a MongoDB transaction session, so transfers are atomic and auditable rather than a single balance field being incremented and decremented.
+
+## Preview
+
+| Dashboard | Transfer | Transaction History |
+|---|---|---|
+| ![Dashboard](https://github.com/user-attachments/assets/7708423d-f548-4a08-a035-8cf00735ab05) | ![Transfer](https://github.com/user-attachments/assets/a93712cd-7337-484b-b7c6-7e586ac9d84f) | ![Transactions](https://github.com/user-attachments/assets/65e58b01-d18c-41be-b12b-e9f314714d37) |
+
+| Login |
+|---|
+| ![Login](https://github.com/user-attachments/assets/8bbc0ea8-8b8d-4351-a052-f7c4e088e59b) |
 
 ## Features
 
@@ -150,6 +165,10 @@ npm run dev
 - [ ] Dark mode
 - [ ] Transaction export (CSV/PDF)
 - [ ] Further mobile responsiveness polish
+
+## Show your support
+
+If Wallet Ledger was useful to you, gave you an idea, or you just liked how it's built, consider leaving a ⭐ — it helps the project reach more people and genuinely motivates further work on it.
 
 ## Author
 
