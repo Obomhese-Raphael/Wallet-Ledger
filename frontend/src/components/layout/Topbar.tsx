@@ -7,27 +7,26 @@ export default function Topbar() {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-slate-200/70 bg-white/70 px-8 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200/70 bg-white/80 px-4 backdrop-blur-xl sm:h-20 sm:px-8">
       {/* Left */}
-
       <div
-        className="flex cursor-pointer items-center gap-6"
+        className="flex min-w-0 cursor-pointer items-center gap-3 sm:gap-6"
         onClick={() => navigate("/")}
       >
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+        <div className="min-w-0">
+          <h1 className="text-lg font-bold text-slate-900 sm:text-2xl">
+            Dashboard
+          </h1>
 
-          <p className="text-sm text-slate-500">
+          <p className="truncate text-xs text-slate-500 sm:text-sm">
             Welcome back, {user?.firstName}
           </p>
         </div>
       </div>
 
       {/* Right */}
-
-      <div className="flex items-center gap-5">
-        {/* Search */}
-
+      <div className="flex items-center gap-2.5 sm:gap-5">
+        {/* Search Input (Desktop Only) */}
         <div className="relative hidden md:block">
           <Search
             size={18}
@@ -55,31 +54,34 @@ export default function Topbar() {
           />
         </div>
 
-        {/* Notification */}
-
+        {/* Notification Button */}
         <button
+          type="button"
+          aria-label="Notifications"
           className="
             relative
             flex
-            h-12
-            w-12
+            h-9
+            w-9
             items-center
             justify-center
-            rounded-2xl
+            rounded-xl
             bg-slate-100
             transition
             hover:bg-slate-200
+            sm:h-12
+            sm:w-12
+            sm:rounded-2xl
           "
         >
-          <Bell size={20} />
+          <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
 
-          <span className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full bg-red-500"></span>
+          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 sm:right-3 sm:top-3 sm:h-2.5 sm:w-2.5" />
         </button>
 
-        {/* Avatar */}
-
-        <div className="flex items-center gap-3 rounded-2xl bg-slate-100 px-3 py-2">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-indigo-600 to-violet-600 text-lg font-bold text-white">
+        {/* User Profile / Avatar */}
+        <div className="flex items-center gap-3 rounded-2xl p-0 sm:bg-slate-100 sm:px-3 sm:py-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-indigo-600 to-violet-600 text-xs font-bold text-white sm:h-12 sm:w-12 sm:text-lg">
             {user?.firstName?.charAt(0)}
             {user?.lastName?.charAt(0)}
           </div>
