@@ -267,50 +267,52 @@ export default function Transfer() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.35 }}
+                className="w-full max-w-full overflow-hidden"
               >
-                <div className="space-y-8">
+                <div className="space-y-4 sm:space-y-8">
                   <div>
-                    <h2 className="text-3xl font-bold">Enter Amount</h2>
+                    <h2 className="text-2xl font-bold sm:text-3xl">
+                      Enter Amount
+                    </h2>
 
-                    <p className="mt-2 text-slate-500">
+                    <p className="mt-1 text-sm text-slate-500 sm:mt-2 sm:text-base">
                       Choose how much you'd like to send.
                     </p>
                   </div>
 
                   {/* Recipient */}
-
-                  <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-white">
-                      <UserRound size={22} />
+                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:gap-4 sm:p-5">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white sm:h-12 sm:w-12">
+                      <UserRound size={20} />
                     </div>
 
-                    <div>
-                      <h3 className="font-semibold">
+                    <div className="min-w-0">
+                      <h3 className="truncate font-semibold text-sm sm:text-base">
                         {recipient.firstName} {recipient.lastName}
                       </h3>
 
-                      <p className="text-sm text-slate-500">
+                      <p className="truncate text-xs text-slate-500 sm:text-sm">
                         {recipient.email}
                       </p>
                     </div>
                   </div>
 
-                  {/* Balance */}
-
-                  <div className="rounded-2xl bg-linear-to-r from-indigo-600 to-violet-600 p-6 text-white">
-                    <p className="text-sm uppercase tracking-widest opacity-80">
+                  {/* Balance (Sized Down & Responsive) */}
+                  <div className="rounded-2xl bg-linear-to-r from-indigo-600 to-violet-600 p-4 sm:p-6 text-white shadow-md">
+                    <p className="text-xs uppercase tracking-widest opacity-80 sm:text-sm">
                       Available Balance
                     </p>
 
-                    <h2 className="mt-2 text-4xl font-bold">
+                    <h2 className="mt-1 truncate text-2xl font-bold sm:mt-2 sm:text-4xl">
                       ₦{balance.toLocaleString()}
                     </h2>
                   </div>
 
-                  {/* Amount */}
-
+                  {/* Amount Input */}
                   <div>
-                    <label className="mb-3 block font-semibold">Amount</label>
+                    <label className="mb-2 block text-sm font-semibold sm:mb-3 sm:text-base">
+                      Amount
+                    </label>
 
                     <div className="relative">
                       <TbCurrencyNaira
@@ -328,66 +330,74 @@ export default function Transfer() {
               rounded-2xl
               border
               border-slate-200
-              py-4
+              py-3
               pl-12
               pr-4
-              text-lg
+              text-base
               font-semibold
               outline-none
               focus:border-indigo-500
               focus:ring-4
               focus:ring-indigo-100
+              sm:py-4
+              sm:text-lg
             "
                       />
                     </div>
                   </div>
 
-                  {/* Description  */}
-
+                  {/* Description */}
                   <div>
-                    <label className="mb-3 block font-semibold">
+                    <label className="mb-2 block text-sm font-semibold sm:mb-3 sm:text-base">
                       Description{" "}
-                      <span className="text-slate-400">(Optional)</span>
+                      <span className="text-slate-400 font-normal">
+                        (Optional)
+                      </span>
                     </label>
 
                     <textarea
-                      rows={3}
+                      rows={2}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      placeholder="e.g. Rent for August, Electricity Bill, Birthday Gift..."
+                      placeholder="e.g. Rent, Electricity Bill, Gift..."
                       className="
-      w-full
-      resize-none
-      rounded-2xl
-      border
-      border-slate-200
-      p-4
-      outline-none
-      transition
-      focus:border-indigo-500
-      focus:ring-4
-      focus:ring-indigo-100
-    "
+            w-full
+            resize-none
+            rounded-2xl
+            border
+            border-slate-200
+            p-3
+            text-sm
+            outline-none
+            transition
+            focus:border-indigo-500
+            focus:ring-4
+            focus:ring-indigo-100
+            sm:p-4
+            sm:text-base
+          "
                     />
                   </div>
 
                   {/* Quick Amounts */}
-
-                  <div className="grid grid-cols-4 gap-3">
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3">
                     {[1000, 5000, 10000].map((value) => (
                       <button
                         key={value}
+                        type="button"
                         onClick={() => setAmount(String(value))}
                         className="
               rounded-xl
               border
               border-slate-200
-              py-3
-              text-sm
+              py-2.5
+              text-xs
               font-semibold
               transition
               hover:border-indigo-500
               hover:bg-indigo-50
+              sm:py-3
+              sm:text-sm
             "
                       >
                         ₦{value.toLocaleString()}
@@ -395,16 +405,19 @@ export default function Transfer() {
                     ))}
 
                     <button
+                      type="button"
                       onClick={() => setAmount(String(balance))}
                       className="
             rounded-xl
             bg-indigo-600
-            py-3
-            text-sm
+            py-2.5
+            text-xs
             font-semibold
             text-white
             transition
             hover:bg-indigo-700
+            sm:py-3
+            sm:text-sm
           "
                     >
                       MAX
@@ -412,8 +425,7 @@ export default function Transfer() {
                   </div>
 
                   {/* Buttons */}
-
-                  <div className="flex gap-4">
+                  <div className="flex gap-3 pt-2">
                     <Button
                       variant="secondary"
                       fullWidth
@@ -439,30 +451,32 @@ export default function Transfer() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -40 }}
                 transition={{ duration: 0.35 }}
+                className="w-full max-w-full overflow-hidden"
               >
-                <div className="space-y-8">
+                <div className="space-y-4 sm:space-y-8">
                   <div>
-                    <h2 className="text-3xl font-bold">Review Transfer</h2>
+                    <h2 className="text-2xl font-bold sm:text-3xl">
+                      Review Transfer
+                    </h2>
 
-                    <p className="mt-2 text-slate-500">
+                    <p className="mt-1 text-xs text-slate-500 sm:mt-2 sm:text-base">
                       Double-check the transfer details before confirming.
                     </p>
                   </div>
 
                   {/* Recipient */}
-
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white">
-                        <UserRound size={24} />
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-5">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white sm:h-14 sm:w-14">
+                        <UserRound className="h-5 w-5 sm:h-6 sm:w-6" />
                       </div>
 
-                      <div>
-                        <h3 className="text-lg font-bold">
+                      <div className="min-w-0">
+                        <h3 className="truncate text-sm font-bold sm:text-lg">
                           {recipient.firstName} {recipient.lastName}
                         </h3>
 
-                        <p className="text-sm text-slate-500">
+                        <p className="truncate text-xs text-slate-500 sm:text-sm">
                           {recipient.email}
                         </p>
                       </div>
@@ -470,53 +484,53 @@ export default function Transfer() {
                   </div>
 
                   {/* Review Card */}
-
-                  <div className="space-y-5 rounded-2xl bg-slate-50 p-6">
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Amount</span>
-
-                      <span className="font-bold">
+                  <div className="space-y-3.5 rounded-2xl bg-slate-50 p-4 sm:space-y-5 sm:p-6">
+                    <div className="flex items-center justify-between gap-2 text-xs sm:text-base">
+                      <span className="shrink-0 text-slate-500">Amount</span>
+                      <span className="truncate font-bold">
                         ₦{Number(amount).toLocaleString()}
                       </span>
                     </div>
 
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Description</span>
-
-                      <span className="font-medium text-right">
+                    <div className="flex items-center justify-between gap-2 text-xs sm:text-base">
+                      <span className="shrink-0 text-slate-500">
+                        Description
+                      </span>
+                      <span className="truncate text-right font-medium">
                         {description.trim() ? description : "No description"}
                       </span>
                     </div>
 
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Transfer Fee</span>
-
+                    <div className="flex items-center justify-between gap-2 text-xs sm:text-base">
+                      <span className="shrink-0 text-slate-500">
+                        Transfer Fee
+                      </span>
                       <span className="font-bold text-emerald-600">FREE</span>
                     </div>
 
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Remaining Balance</span>
-
-                      <span className="font-bold text-indigo-600">
+                    {/* Remaining Balance Fix */}
+                    <div className="flex items-center justify-between gap-2 text-xs sm:text-base">
+                      <span className="shrink-0 text-slate-500">
+                        Remaining Balance
+                      </span>
+                      <span className="truncate text-right font-bold text-indigo-600">
                         ₦{(balance - Number(amount)).toLocaleString()}
                       </span>
                     </div>
 
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Status</span>
-
-                      <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">
+                    <div className="flex items-center justify-between gap-2 text-xs sm:text-base">
+                      <span className="shrink-0 text-slate-500">Status</span>
+                      <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700 sm:px-3 sm:py-1 sm:text-sm">
                         Instant Transfer
                       </span>
                     </div>
                   </div>
 
-                  {/* Warning */}
+                  {/* Warning Box */}
+                  <div className="flex items-start gap-2.5 rounded-2xl bg-amber-50 p-3.5 sm:gap-4 sm:p-5">
+                    <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-500 sm:h-5 sm:w-5" />
 
-                  <div className="flex gap-4 rounded-2xl bg-amber-50 p-5">
-                    <TriangleAlert className="text-amber-500" />
-
-                    <p className="text-sm text-amber-700">
+                    <p className="text-xs text-amber-700 sm:text-sm leading-relaxed">
                       Transfers cannot be reversed after they have been
                       confirmed. Please ensure the recipient and amount are
                       correct.
@@ -524,8 +538,7 @@ export default function Transfer() {
                   </div>
 
                   {/* Buttons */}
-
-                  <div className="flex gap-4">
+                  <div className="flex gap-3 pt-2">
                     <Button
                       variant="secondary"
                       fullWidth
@@ -656,7 +669,6 @@ export default function Transfer() {
                       fullWidth
                       onClick={() => {
                         try {
-
                           generateReceipt({
                             recipient:
                               `${recipient?.firstName ?? ""} ${recipient?.lastName ?? ""}`.trim() ||
@@ -677,7 +689,6 @@ export default function Transfer() {
                               transaction.createdAt,
                             ).toLocaleString(),
                           });
-
                         } catch (err) {
                           console.error(err);
                         }

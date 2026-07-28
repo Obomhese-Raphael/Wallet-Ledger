@@ -21,19 +21,25 @@ export default function TransactionCard({ transaction, onClick }: Props) {
   function getIcon() {
     switch (transaction.type) {
       case "deposit":
-        return <ArrowDownCircle size={24} className="text-emerald-600" />;
+        return (
+          <ArrowDownCircle className="h-5 w-5 text-emerald-600 sm:h-6 sm:w-6" />
+        );
 
       case "withdraw":
-        return <ArrowUpCircle size={24} className="text-red-500" />;
+        return <ArrowUpCircle className="h-5 w-5 text-red-500 sm:h-6 sm:w-6" />;
 
       case "transfer_in":
-        return <ArrowRightLeft size={24} className="text-sky-600" />;
+        return (
+          <ArrowRightLeft className="h-5 w-5 text-sky-600 sm:h-6 sm:w-6" />
+        );
 
       case "transfer_out":
-        return <ArrowRightLeft size={24} className="text-indigo-600" />;
+        return (
+          <ArrowRightLeft className="h-5 w-5 text-indigo-600 sm:h-6 sm:w-6" />
+        );
 
       default:
-        return <ArrowRightLeft size={24} />;
+        return <ArrowRightLeft className="h-5 w-5 sm:h-6 sm:w-6" />;
     }
   }
 
@@ -60,24 +66,24 @@ export default function TransactionCard({ transaction, onClick }: Props) {
     switch (transaction.status) {
       case "completed":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-            <CheckCircle2 size={13} />
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700 sm:px-3 sm:py-1 sm:text-xs">
+            <CheckCircle2 size={12} className="sm:w-3.5 sm:h-3.5" />
             Completed
           </span>
         );
 
       case "pending":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-            <Clock3 size={13} />
+          <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-semibold text-amber-700 sm:px-3 sm:py-1 sm:text-xs">
+            <Clock3 size={12} className="sm:w-3.5 sm:h-3.5" />
             Pending
           </span>
         );
 
       default:
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
-            <XCircle size={13} />
+          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-[10px] font-semibold text-red-700 sm:px-3 sm:py-1 sm:text-xs">
+            <XCircle size={12} className="sm:w-3.5 sm:h-3.5" />
             Failed
           </span>
         );
@@ -86,81 +92,93 @@ export default function TransactionCard({ transaction, onClick }: Props) {
 
   return (
     <button
+      type="button"
       onClick={onClick}
       className="
-      group
-      w-full
-      rounded-3xl
-      border
-      border-slate-200
-      bg-white
-      p-6
-      text-left
-      shadow-sm
-      transition-all
-      duration-300
-      hover:-translate-y-1
-      hover:border-indigo-200
-      hover:shadow-xl
-    "
+        group
+        w-full
+        max-w-full
+        overflow-hidden
+        rounded-2xl
+        border
+        border-slate-200/80
+        bg-white
+        p-3.5
+        text-left
+        shadow-sm
+        transition-all
+        duration-300
+        hover:-translate-y-0.5
+        hover:border-indigo-200
+        hover:shadow-md
+        sm:rounded-3xl
+        sm:p-6
+      "
     >
-      <div className="flex items-start justify-between">
-        {/* Left */}
-        <div className="flex gap-4">
+      <div className="flex items-center justify-between gap-2.5 sm:gap-4">
+        {/* Left Section: Icon + Details */}
+        <div className="flex min-w-0 items-center gap-2.5 sm:gap-4">
           <div
             className="
-            flex
-            h-14
-            w-14
-            items-center
-            justify-center
-            rounded-2xl
-            bg-slate-100
-            transition
-            group-hover:scale-105
-          "
+              flex
+              h-10
+              w-10
+              shrink-0
+              items-center
+              justify-center
+              rounded-xl
+              bg-slate-100
+              transition
+              group-hover:scale-105
+              sm:h-14
+              sm:w-14
+              sm:rounded-2xl
+            "
           >
             {getIcon()}
           </div>
 
-          <div>
-            <h3 className="text-lg font-bold text-slate-900">{getTitle()}</h3>
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate text-xs font-bold text-slate-900 sm:text-lg">
+              {getTitle()}
+            </h3>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="truncate text-[11px] text-slate-500 sm:mt-1 sm:text-sm">
               {transaction.description}
             </p>
 
-            <div className="mt-4 flex flex-wrap gap-5 text-xs text-slate-400">
-              <div>
-                <p className="uppercase tracking-wide">Reference</p>
-
-                <p className="mt-1 font-medium text-slate-700">
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-slate-400 sm:mt-3 sm:text-xs">
+              <div className="min-w-0 max-w-30 sm:max-w-none">
+                <span className="hidden uppercase tracking-wide sm:inline">
+                  Reference:{" "}
+                </span>
+                <span className="truncate font-medium text-slate-600">
                   {transaction.reference}
-                </p>
+                </span>
               </div>
 
-              <div>
-                <p className="uppercase tracking-wide">Date</p>
+              <span className="hidden sm:inline">•</span>
 
-                <p className="mt-1 font-medium text-slate-700">
-                  {new Date(transaction.createdAt).toLocaleString()}
-                </p>
+              <div>
+                <span className="font-medium text-slate-600">
+                  {new Date(transaction.createdAt).toLocaleDateString()}
+                </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right */}
-        <div className="text-right">
+        {/* Right Section: Amount & Badge */}
+        <div className="flex shrink-0 flex-col items-end gap-1.5 text-right sm:gap-2">
           <h2
-            className={`text-2xl font-bold ${
+            className={`whitespace-nowrap text-sm font-bold sm:text-2xl ${
               incoming ? "text-emerald-600" : "text-red-500"
             }`}
           >
             {incoming ? "+" : "-"}₦{transaction.amount.toLocaleString()}
           </h2>
 
-          <div className="mt-4">{statusBadge()}</div>
+          <div>{statusBadge()}</div>
         </div>
       </div>
     </button>

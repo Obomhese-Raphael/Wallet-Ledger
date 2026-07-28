@@ -12,10 +12,12 @@ import DashboardLayout from "../../components/layout/DashboardLayout";
 import TransactionCard from "../../components/transactions/TransactionCard";
 import TransactionSearch from "../../components/transactions/TransactionSearch";
 
-
 import { getTransactions } from "../../services/transaction.service";
 import type { Transaction } from "../../types/transaction";
-import type { TransactionStatusFilter, TransactionTypeFilter } from "../../components/transactions/TransactionFilters";
+import type {
+  TransactionStatusFilter,
+  TransactionTypeFilter,
+} from "../../components/transactions/TransactionFilters";
 import TransactionFilterBar from "../../components/transactions/TransactionFilters";
 import TransactionDetailsModal from "../../components/transactions/TransactionDetailModal";
 
@@ -130,24 +132,28 @@ export default function Transactions() {
     <DashboardLayout>
       <div className="mx-auto max-w-6xl space-y-8">
         {/* Header */}
-        <div className="rounded-3xl bg-linear-to-r from-indigo-600 via-indigo-500 to-violet-600 p-8 text-white shadow-xl">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="rounded-2xl bg-linear-to-r from-indigo-600 via-indigo-500 to-violet-600 p-5 sm:rounded-3xl sm:p-8 text-white shadow-xl">
+          <div className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-indigo-100">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-100 sm:text-sm sm:tracking-[0.25em]">
                 Wallet Ledger
               </p>
 
-              <h1 className="mt-2 text-4xl font-extrabold">Transactions</h1>
+              <h1 className="mt-1 text-2xl font-extrabold sm:mt-2 sm:text-4xl">
+                Transactions
+              </h1>
 
-              <p className="mt-3 max-w-2xl text-indigo-100">
+              <p className="mt-1.5 max-w-2xl text-xs text-indigo-100 sm:mt-3 sm:text-base">
                 Every deposit, withdrawal and transfer made from your wallet.
               </p>
             </div>
 
-            <div className="rounded-2xl bg-white/10 px-6 py-5 backdrop-blur-md">
-              <p className="text-sm text-indigo-100">Total Transactions</p>
+            <div className="flex items-center justify-between rounded-xl bg-white/10 px-4 py-3 backdrop-blur-md sm:block sm:rounded-2xl sm:px-6 sm:py-5">
+              <p className="text-xs text-indigo-100 sm:text-sm">
+                Total Transactions
+              </p>
 
-              <h2 className="mt-2 text-5xl font-bold">
+              <h2 className="text-2xl font-bold sm:mt-2 sm:text-5xl">
                 {pagination?.total ?? 0}
               </h2>
             </div>
@@ -155,12 +161,12 @@ export default function Transactions() {
         </div>
 
         {/* Statistics */}
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-4">
           <StatCard
             title="Transactions"
             value={transactions.length}
             subtitle="Loaded"
-            icon={<Wallet size={22} />}
+            icon={<Wallet className="h-4 w-4 sm:h-5 sm:w-5" />}
             color="bg-indigo-100 text-indigo-600"
           />
 
@@ -168,7 +174,7 @@ export default function Transactions() {
             title="Money In"
             value={`₦${totalIn.toLocaleString()}`}
             subtitle="Deposits & Incoming"
-            icon={<ArrowDownCircle size={22} />}
+            icon={<ArrowDownCircle className="h-4 w-4 sm:h-5 sm:w-5" />}
             color="bg-emerald-100 text-emerald-600"
           />
 
@@ -176,7 +182,7 @@ export default function Transactions() {
             title="Money Out"
             value={`₦${totalOut.toLocaleString()}`}
             subtitle="Withdrawals & Transfers"
-            icon={<ArrowUpCircle size={22} />}
+            icon={<ArrowUpCircle className="h-4 w-4 sm:h-5 sm:w-5" />}
             color="bg-red-100 text-red-500"
           />
 
@@ -184,7 +190,7 @@ export default function Transactions() {
             title="Net Flow"
             value={`₦${net.toLocaleString()}`}
             subtitle={net >= 0 ? "Positive" : "Negative"}
-            icon={<ArrowRightLeft size={22} />}
+            icon={<ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5" />}
             color="bg-sky-100 text-sky-600"
           />
         </div>
@@ -203,17 +209,19 @@ export default function Transactions() {
 
         {/* Transaction List */}
         {filteredTransactions.length === 0 ? (
-          <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center shadow-sm">
-            <div className="text-5xl">🔍</div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:rounded-3xl sm:p-12">
+            <div className="text-4xl sm:text-5xl">🔍</div>
 
-            <h2 className="mt-4 text-xl font-bold">No matching transactions</h2>
+            <h2 className="mt-3 text-lg font-bold sm:mt-4 sm:text-xl">
+              No matching transactions
+            </h2>
 
-            <p className="mt-2 text-slate-500">
+            <p className="mt-1 text-xs text-slate-500 sm:mt-2 sm:text-base">
               Try adjusting your search or filters.
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-2.5 sm:space-y-4">
             {filteredTransactions.map((transaction) => (
               <div
                 key={transaction._id}
@@ -225,7 +233,7 @@ export default function Transactions() {
                     setSelectedTransaction(transaction);
                   }
                 }}
-                className="cursor-pointer transition hover:-translate-y-0.5"
+                className="cursor-pointer transition hover:-translate-y-0.5 focus:outline-none"
               >
                 <TransactionCard transaction={transaction} />
               </div>
@@ -261,35 +269,42 @@ interface StatCardProps {
   icon: React.ReactNode;
   color: string;
 }
-
 function StatCard({ title, value, subtitle, icon, color }: StatCardProps) {
   return (
     <div
       className="
         group
-        rounded-3xl
+        rounded-2xl
         border
-        border-slate-200
+        border-slate-200/80
         bg-white
-        p-6
+        p-3.5
         shadow-sm
         transition-all
         duration-300
         hover:-translate-y-1
-        hover:shadow-xl
+        hover:shadow-md
+        sm:rounded-3xl
+        sm:p-6
       "
     >
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm font-medium text-slate-500">{title}</p>
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs font-medium text-slate-500 sm:text-sm">
+            {title}
+          </p>
 
-          <h2 className="mt-3 text-3xl font-bold text-slate-900">{value}</h2>
+          <h2 className="mt-1 truncate text-base font-bold text-slate-900 sm:mt-3 sm:text-3xl">
+            {value}
+          </h2>
 
-          <p className="mt-2 text-sm text-slate-400">{subtitle}</p>
+          <p className="mt-1 truncate text-[11px] text-slate-400 sm:mt-2 sm:text-sm">
+            {subtitle}
+          </p>
         </div>
 
         <div
-          className={`rounded-2xl p-4 transition group-hover:scale-110 ${color}`}
+          className={`shrink-0 rounded-xl p-2 sm:rounded-2xl sm:p-3.5 transition group-hover:scale-105 ${color}`}
         >
           {icon}
         </div>

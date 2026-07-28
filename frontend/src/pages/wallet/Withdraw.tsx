@@ -113,7 +113,7 @@ export default function Withdraw() {
                       Available Balance
                     </p>
 
-                    <h2 className="mt-2 text-4xl font-bold">
+                    <h2 className="mt-2 text-2xl font-bold sm:text-3xl lg:text-4xl">
                       ₦{balance.toLocaleString()}
                     </h2>
                   </div>
@@ -188,42 +188,50 @@ export default function Withdraw() {
                   duration: 0.35,
                 }}
               >
-                <div className="space-y-8">
+                <div className="space-y-5 sm:space-y-8">
                   <div>
-                    <h2 className="text-3xl font-bold">Review Withdrawal</h2>
+                    <h2 className="text-2xl font-bold sm:text-3xl">
+                      Review Withdrawal
+                    </h2>
 
-                    <p className="mt-2 text-slate-500">
+                    <p className="mt-1 text-sm text-slate-500 sm:mt-2 sm:text-base">
                       Confirm the details below.
                     </p>
                   </div>
 
-                  <div className="space-y-5 rounded-2xl bg-slate-50 p-6">
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Amount</span>
+                  <div className="space-y-4 rounded-2xl bg-slate-50 p-4 sm:space-y-5 sm:p-6">
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-sm text-slate-500 sm:text-base">
+                        Amount
+                      </span>
 
-                      <span className="font-bold">
+                      <span className="text-base font-bold sm:text-lg">
                         ₦{Number(amount).toLocaleString()}
                       </span>
                     </div>
 
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Remaining Balance</span>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-sm text-slate-500 sm:text-base">
+                        Remaining Balance
+                      </span>
 
-                      <span className="font-bold text-indigo-600">
+                      <span className="text-right text-base font-bold text-indigo-600 sm:text-lg">
                         ₦{(balance - Number(amount)).toLocaleString()}
                       </span>
                     </div>
 
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Status</span>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-sm text-slate-500 sm:text-base">
+                        Status
+                      </span>
 
-                      <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
+                      <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700 sm:text-sm">
                         Instant
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex gap-4">
+                  <div className="flex gap-3 sm:gap-4">
                     <Button
                       variant="secondary"
                       fullWidth

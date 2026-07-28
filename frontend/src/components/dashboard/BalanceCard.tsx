@@ -10,51 +10,58 @@ export default function BalanceCard({ balance }: Props) {
       className="
       relative
       overflow-hidden
-      rounded-4xl
+      rounded-3xl sm:rounded-4xl
       bg-linear-to-br
       from-indigo-700
       via-violet-700
       to-blue-700
-      p-8
+      p-5 sm:p-8
       text-white
       shadow-2xl
     "
     >
       <div className="absolute -right-32 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-
       <div className="absolute -bottom-28 -left-20 h-72 w-72 rounded-full bg-cyan-300/10 blur-3xl" />
 
       <div className="relative">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="rounded-3xl bg-white/15 p-4 backdrop-blur">
-              <Wallet size={30} />
+        {/* Top Header Row */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl bg-white/15 p-2.5 sm:p-4 backdrop-blur">
+              <Wallet className="h-5 w-5 sm:h-7 sm:w-7" />
             </div>
 
             <div>
-              <p className="text-sm uppercase tracking-[4px] text-indigo-100">
+              <p className="text-xs uppercase tracking-[2px] sm:tracking-[4px] text-indigo-100">
                 Available Balance
               </p>
-
-              <h2 className="mt-3 text-5xl font-black">
-                ₦{balance.toLocaleString()}
-              </h2>
             </div>
           </div>
 
-          <button className="rounded-2xl bg-white/15 p-4 backdrop-blur transition hover:bg-white/25">
-            <ArrowUpRight />
+          <button className="rounded-xl bg-white/15 p-2.5 sm:p-4 backdrop-blur transition hover:bg-white/25">
+            <ArrowUpRight className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
         </div>
 
-        <div className="mt-10 flex items-center justify-between">
-          <div>
-            <p className="text-indigo-100">Wallet Status</p>
+        {/* Balance Display */}
+        <div className="mt-4 sm:mt-6">
+          <h2 className="break-all text-3xl font-black sm:text-5xl">
+            ₦{balance.toLocaleString()}
+          </h2>
+        </div>
 
-            <h3 className="mt-1 text-lg font-semibold">Active</h3>
+        {/* Bottom Status Row */}
+        <div className="mt-6 flex items-center justify-between sm:mt-10">
+          <div>
+            <p className="text-xs text-indigo-100 sm:text-base">
+              Wallet Status
+            </p>
+            <h3 className="mt-0.5 text-base font-semibold sm:mt-1 sm:text-lg">
+              Active
+            </h3>
           </div>
 
-          <div className="rounded-full bg-emerald-400/20 px-5 py-2 font-semibold text-emerald-200">
+          <div className="rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-200 sm:px-5 sm:py-2 sm:text-sm">
             ● Live
           </div>
         </div>

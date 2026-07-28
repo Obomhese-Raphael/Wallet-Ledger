@@ -13,12 +13,12 @@ export default function Greeting() {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-4xl font-black tracking-tight text-slate-900">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-slate-900 leading-tight">
           {greeting}, <span className="text-indigo-600">{user?.firstName}</span>
           👋
         </h1>
 
-        <p className="mt-2 text-slate-500">
+        <p className="mt-1.5 sm:mt-2 text-sm sm:text-base text-slate-500">
           Here's everything happening with your wallet today.
         </p>
       </div>
