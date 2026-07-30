@@ -20,6 +20,10 @@ export const uploadAvatar = async (userId: string, fileBuffer: Buffer) => {
 
   // Upload to Cloudinary
   const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
+    console.log(
+      "Uploading to Cloudinary with cloud_name:",
+      cloudinary.config().cloud_name,
+    );
     cloudinary.uploader
       .upload_stream(
         {
@@ -35,6 +39,8 @@ export const uploadAvatar = async (userId: string, fileBuffer: Buffer) => {
       )
       .end(fileBuffer);
   });
+
+  console.log("Result in Upload Avatar: ", result);
 
   user.avatar = result.secure_url;
   await user.save();
