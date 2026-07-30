@@ -2,7 +2,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { toast } from "sonner";  
 
 import AuthLayout from "../../components/auth/AuthLayout";
 import AuthCard from "../../components/auth/AuthCard";
