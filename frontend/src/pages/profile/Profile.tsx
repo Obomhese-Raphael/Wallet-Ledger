@@ -1,20 +1,22 @@
 // pages/profile/Profile.tsx
+import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Button from "../../components/ui/Button";
-import DashboardLayout from "../../components/layout/DashboardLayout"; // adjust path if needed
-import { useState } from "react";
+import DashboardLayout from "../../components/layout/DashboardLayout";
+import VerifyEmailModal from "../../components/auth/VerifyEmailModal";
 
 export default function Profile() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
 
   if (!user) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="flex min-h-[50vh] items-center justify-center">
           <p className="text-slate-500">Loading profile...</p>
         </div>
       </DashboardLayout>
@@ -23,23 +25,21 @@ export default function Profile() {
 
   const handleLogout = () => {
     setIsLoggingOut(true);
-
-    // Optional: show a toast
     toast.success("Logging out...");
 
-    // Wait 3 seconds, then actually log out + redirect
     setTimeout(() => {
       logout();
       navigate("/login");
-    }, 3000); // change to 4000 or 5000 if you prefer
+    }, 3000);
   };
 
   const fullName = `${user.firstName} ${user.lastName}`;
   const avatarUrl =
     user.avatar ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=6366f1&color=fff&size=128`;
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      fullName,
+    )}&background=6366f1&color=fff&size=128`;
 
-  // Safe date handling
   const memberSince = user.createdAt
     ? new Date(user.createdAt).toLocaleDateString(undefined, {
         year: "numeric",
@@ -112,6 +112,17 @@ export default function Profile() {
               </span>
             </div>
           </div>
+
+          {!user.isVerified && (
+            <Button
+              variant="primary"
+              fullWidth
+              className="mt-6"
+              onClick={() => setShowVerifyModal(true)}
+            >
+              Verify Email
+            </Button>
+          )}
         </section>
 
         {/* Security */}
@@ -136,6 +147,11 @@ export default function Profile() {
           </Button>
         </section>
       </div>
+
+      <VerifyEmailModal
+        open={showVerifyModal}
+        onClose={() => setShowVerifyModal(false)}
+      />
     </DashboardLayout>
   );
 }

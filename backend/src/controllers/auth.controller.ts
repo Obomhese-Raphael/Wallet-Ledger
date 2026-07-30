@@ -5,6 +5,7 @@ import { loginUser } from "../services/auth.service.js";
 import { createWallet } from "../services/wallet.service.js";
 import { createAccount } from "../services/account.service.js";
 import appError from "../utils/appError.js";
+import { sendEmailOtp, verifyEmailOtp } from "../services/auth.service.js";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -42,4 +43,15 @@ export const login = async (req: Request, res: Response) => {
 
 export const getCurrentUser = async (req: Request, res: Response) => {
   return successResponse(res, "Current user retrieved successfully", req.user);
+};
+
+export const sendVerificationOtp = async (req: Request, res: Response) => {
+  const result = await sendEmailOtp(req.user.id);
+  return successResponse(res, result.message, null);
+};
+
+export const verifyEmail = async (req: Request, res: Response) => {
+  const { otp } = req.body;
+  const user = await verifyEmailOtp(req.user.id, otp);
+  return successResponse(res, "Email verified successfully", user);
 };

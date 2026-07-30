@@ -20,3 +20,14 @@ export const login = async (data: LoginRequest): Promise<AuthResponse> => {
 
   return response.data;
 };
+
+export const sendVerificationOtp = async () => {
+  const response = await api.post("/auth/send-verification-otp");
+  console.log("Response on Sending Verification Code: ", response);
+  return response.data;
+};
+
+export const verifyEmail = async (otp: string) => {
+  const response = await api.post("/auth/verify-email", { otp });
+  return response.data;
+};
