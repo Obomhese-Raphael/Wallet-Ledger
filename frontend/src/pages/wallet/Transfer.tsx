@@ -225,9 +225,17 @@ export default function Transfer() {
                       className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-white">
-                          <UserRound size={24} />
-                        </div>
+                        {recipient.avatar ? (
+                          <img
+                            src={recipient.avatar}
+                            alt={`${recipient.firstName} ${recipient.lastName}`}
+                            className="h-14 w-14 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-white">
+                            <UserRound size={24} />
+                          </div>
+                        )}
 
                         <div className="flex-1">
                           <h3 className="text-lg font-bold">
