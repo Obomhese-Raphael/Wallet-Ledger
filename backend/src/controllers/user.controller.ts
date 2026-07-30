@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
 
-import { findUserByEmail } from "../services/user.service.js";
+import { findUserByEmail, uploadAvatar } from "../services/user.service.js";
 import { successResponse, errorResponse } from "../utils/apiResponse.js";
+import appError from "../utils/appError.js";
 
 export const getUserByEmail = async (req: Request, res: Response) => {
   try {
@@ -21,4 +22,13 @@ export const getUserByEmail = async (req: Request, res: Response) => {
   } catch (error) {
     return errorResponse(res, "Internal Server Error", 500);
   }
+};
+
+export const updateAvatar = async (req: Request, res: Response) => {
+  if (!req.file) {
+    throw new appError("No image file provided", 400);
+  }
+
+  const user = await uploadAvatar(req.user.id, req.file.buffer);
+  return successResponse(res, "Avatar updated successfully", user);
 };

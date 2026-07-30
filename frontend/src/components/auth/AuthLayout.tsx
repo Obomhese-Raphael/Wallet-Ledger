@@ -59,7 +59,6 @@ export default function AuthLayout({ children }: Props) {
           <button
             type="button"
             onClick={() => {
-              console.log("Roadmap clicked");
               setShowRoadmap(true);
             }}
             className="mt-5 block text-sm font-medium text-indigo-100 transition hover:text-white"

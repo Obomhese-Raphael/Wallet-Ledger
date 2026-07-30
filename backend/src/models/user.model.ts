@@ -39,6 +39,11 @@ const userSchema = new Schema(
       default: false,
     },
 
+    avatar: {
+      type: String,
+      default: null
+    },
+    
     otp: {
       type: String,
       default: null,

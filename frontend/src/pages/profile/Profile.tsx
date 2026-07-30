@@ -1,17 +1,20 @@
 // pages/profile/Profile.tsx
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Button from "../../components/ui/Button";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import VerifyEmailModal from "../../components/auth/VerifyEmailModal";
+import { uploadAvatar } from "../../services/auth.service";
 
 export default function Profile() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!user) {
     return (
@@ -22,6 +25,22 @@ export default function Profile() {
       </DashboardLayout>
     );
   }
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingAvatar(true);
+      const res = await uploadAvatar(file);
+      updateUser(res.data); // adjust if your response shape is different
+      toast.success("Avatar updated");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to upload avatar");
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   const handleLogout = () => {
     setIsLoggingOut(true);
@@ -58,6 +77,27 @@ export default function Profile() {
               src={avatarUrl}
               alt={fullName}
               className="h-24 w-24 rounded-full object-cover ring-4 ring-white shadow-md"
+            />
+
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingAvatar}
+              className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-white shadow hover:bg-indigo-700 disabled:opacity-60"
+            >
+              {uploadingAvatar ? (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              ) : (
+                <span className="text-sm">✎</span> // or use a Camera icon from lucide-react
+              )}
+            </button>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarChange}
             />
           </div>
 
