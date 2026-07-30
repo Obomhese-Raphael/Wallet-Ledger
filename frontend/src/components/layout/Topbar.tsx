@@ -80,7 +80,11 @@ export default function Topbar() {
         </button>
 
         {/* User Profile / Avatar */}
-        <div className="flex items-center gap-3 rounded-2xl p-0 sm:bg-slate-100 sm:px-3 sm:py-2">
+        {/* User Profile / Avatar */}
+        <div
+          onClick={() => navigate("/profile")}
+          className="flex cursor-pointer items-center gap-3 rounded-2xl p-0 transition hover:bg-slate-100 sm:bg-slate-100 sm:px-3 sm:py-2 sm:hover:bg-slate-200"
+        >
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-indigo-600 to-violet-600 text-xs font-bold text-white sm:h-12 sm:w-12 sm:text-lg">
             {user?.firstName?.charAt(0)}
             {user?.lastName?.charAt(0)}
@@ -90,7 +94,6 @@ export default function Topbar() {
             <p className="font-semibold text-slate-900">
               {user?.firstName} {user?.lastName}
             </p>
-
             <p className="text-xs text-slate-500">{user?.email}</p>
           </div>
         </div>

@@ -13,6 +13,7 @@ import Transactions from "../pages/wallet/Transactions";
 import TransactionDetails from "../pages/wallet/TransactionDetails";
 
 import ProtectedRoute from "./ProtectedRoute";
+import Profile from "../pages/profile/Profile";
 
 const AppRoutes = () => {
   return (
@@ -73,6 +74,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <TransactionDetails />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         }
       />

@@ -3,7 +3,7 @@ import clsx from "clsx";
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "danger"; // ← added "danger"
   loading?: boolean;
 }
 
@@ -26,6 +26,9 @@ export default function Button({
 
         variant === "secondary" &&
           "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
+
+        variant === "danger" &&
+          "bg-red-500 text-white hover:bg-red-600 active:bg-red-700",
 
         fullWidth && "w-full",
 

@@ -17,6 +17,12 @@ export interface User {
   lastName: string;
   email: string;
   phoneNumber: string;
+
+  // optional – safe to add
+  isVerified?: boolean;
+  avatar?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface AuthResponse {
