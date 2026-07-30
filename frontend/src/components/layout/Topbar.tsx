@@ -53,7 +53,6 @@ export default function Topbar() {
             "
           />
         </div>
-
         {/* Notification Button */}
         <button
           type="button"
@@ -78,17 +77,24 @@ export default function Topbar() {
 
           <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 sm:right-3 sm:top-3 sm:h-2.5 sm:w-2.5" />
         </button>
-
-        {/* User Profile / Avatar */}
+        
         {/* User Profile / Avatar */}
         <div
           onClick={() => navigate("/profile")}
           className="flex cursor-pointer items-center gap-3 rounded-2xl p-0 transition hover:bg-slate-100 sm:bg-slate-100 sm:px-3 sm:py-2 sm:hover:bg-slate-200"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-indigo-600 to-violet-600 text-xs font-bold text-white sm:h-12 sm:w-12 sm:text-lg">
-            {user?.firstName?.charAt(0)}
-            {user?.lastName?.charAt(0)}
-          </div>
+          {user?.avatar ? (
+            <img
+              src={user.avatar}
+              alt={`${user?.firstName} ${user?.lastName}`}
+              className="h-9 w-9 rounded-full object-cover sm:h-12 sm:w-12"
+            />
+          ) : (
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-indigo-600 to-violet-600 text-xs font-bold text-white sm:h-12 sm:w-12 sm:text-lg">
+              {user?.firstName?.charAt(0)}
+              {user?.lastName?.charAt(0)}
+            </div>
+          )}
 
           <div className="hidden lg:block">
             <p className="font-semibold text-slate-900">
