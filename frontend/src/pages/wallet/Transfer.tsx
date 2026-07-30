@@ -31,6 +31,7 @@ export default function Transfer() {
   const [searching, setSearching] = useState(false);
   const [sameErrorMessage, setSameErrorMessage] = useState("");
   const [description, setDescription] = useState("");
+  const [amountExceeding, setAmountExceeding] = useState(false);
 
   const navigate = useNavigate();
 
@@ -49,7 +50,6 @@ export default function Transfer() {
     mutationFn: transfer,
 
     onSuccess: (response) => {
-
       setTransaction(response.data);
 
       toast.success("Transfer Successful");
@@ -149,6 +149,7 @@ export default function Transfer() {
     }
 
     if (value > balance) {
+      setAmountExceeding(true);
       toast.error("Insufficient wallet balance.");
       return;
     }
@@ -331,27 +332,40 @@ export default function Transfer() {
                       <input
                         type="number"
                         value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setAmount(value);
+                          setAmountExceeding(Number(value) > balance);
+                        }}
                         placeholder="0.00"
-                        className="
-              w-full
-              rounded-2xl
-              border
-              border-slate-200
-              py-3
-              pl-12
-              pr-4
-              text-base
-              font-semibold
-              outline-none
-              focus:border-indigo-500
-              focus:ring-4
-              focus:ring-indigo-100
-              sm:py-4
-              sm:text-lg
-            "
+                        className={`
+        w-full
+        rounded-2xl
+        border
+        py-3
+        pl-12
+        pr-4
+        text-base
+        font-semibold
+        outline-none
+        focus:ring-4
+        sm:py-4
+        sm:text-lg
+        ${
+          amountExceeding
+            ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+            : "border-slate-200 focus:border-indigo-500 focus:ring-indigo-100"
+        }
+      `}
                       />
                     </div>
+
+                    {amountExceeding && (
+                      <p className="mt-2 text-sm font-medium text-red-600">
+                        Amount exceeds your available balance of ₦
+                        {balance.toLocaleString()}.
+                      </p>
+                    )}
                   </div>
 
                   {/* Description */}
@@ -667,6 +681,7 @@ export default function Transfer() {
                         setReceiverEmail("");
                         setAmount("");
                         setDescription("");
+                        setAmountExceeding(false); // add this
                       }}
                     >
                       New Transfer
